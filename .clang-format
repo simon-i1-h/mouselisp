@@ -1,0 +1,6 @@
+---
+BasedOnStyle: LLVM
+# Emacs等での折返し対策で80より少し減らす。2減らしているのは全角文字の
+# ため。
+ColumnLimit: 78
+...

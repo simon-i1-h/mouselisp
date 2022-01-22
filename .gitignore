@@ -1,0 +1,13 @@
+# compilation database
+compile_commands.json
+
+# for coverage
+*.gcno
+*.gcda
+*.cpp.gcov
+
+*.o
+*.d
+
+# executable file
+mouselisp
