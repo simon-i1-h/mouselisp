@@ -4,8 +4,8 @@
 
 namespace mouselisp {
 
-read_char File::read(File &f) {
-  read_char ret = {.c = f.str.at(f.pos), .eof = 0, .pos = f.pos};
+ReadChar File::read(File &f) {
+  ReadChar ret = {.c = f.str.at(f.pos), .eof = 0, .pos = f.pos};
 
   if (f.str.at(f.pos) == '\0')
     ret.eof = 1;

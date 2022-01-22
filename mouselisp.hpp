@@ -42,7 +42,7 @@ void fatal2(const char *filename, const char *line, const char *fmt, ...);
 
 /* file */
 
-struct read_char {
+struct ReadChar {
   char c;
   bool eof;
   size_t pos;
@@ -54,7 +54,7 @@ struct File {
 
   File(std::string str) : str(str), pos(0) {}
 
-  read_char read(File &f);
+  ReadChar read(File &f);
 };
 
 } // namespace mouselisp
