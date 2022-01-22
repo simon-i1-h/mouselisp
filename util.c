@@ -1,10 +1,8 @@
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "mouselisp.hpp"
-
-namespace mouselisp {
+#include "mouselisp.h"
 
 void vlogmsgx(const char *filename, const char *line, int newline,
               const char *fmt, va_list ap) {
@@ -51,4 +49,29 @@ void fatal2(const char *filename, const char *line, const char *fmt, ...) {
   exit(1);
 }
 
-} // namespace mouselisp
+void *
+xgcmalloc(size_t size)
+{
+	void *ret = GC_MALLOC(size);
+	if (ret == NULL)
+		fatal("GC_MALLOC");
+
+	return ret;
+}
+
+/*
+ * 常に有効なアドレスを返すので、呼び出し元は一時変数を使わずに次のよ
+ * うに呼び出せる。
+ *
+ *   ptr = xgcrealloc(ptr, newsize)
+ *
+ */
+void *
+xgcrealloc(void *ptr, size_t size)
+{
+	void *ret = GC_REALLOC(ptr, size);
+	if (ret == NULL)
+		fatal("GC_REALLOC");
+
+	return ret;
+}
