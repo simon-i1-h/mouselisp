@@ -151,14 +151,14 @@ void ml_machine_eval(ml_machine *machine, ml_object *root) {
       if (strcmp(f->u.str.str, "+") == 0 && a->tag == ML_OBJECT_NUMBER &&
           b->tag == ML_OBJECT_NUMBER) {
         ml_object *r = ml_object_new_number(a->u.num + b->u.num);
-        logmsg("evaled:");
+        logmsg("evaluated:");
         ml_object_debug_dump(r);
         return;
       }
     }
   }
 
-  logmsg("eval failed:");
+  logmsg("evaluate failed:");
   ml_object_debug_dump(root);
 }
 
