@@ -76,7 +76,6 @@ typedef struct ml_string {
 	size_t capacity;
 } ml_string;
 
-ml_string ml_string_new(void);
 ml_string ml_string_new_str(const char *str);
 void ml_string_concat_char(ml_string *s, int c);
 void ml_string_concat_string(ml_string *s, const char *str);

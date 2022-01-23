@@ -3,15 +3,9 @@
 #include "mouselisp.h"
 
 ml_string
-ml_string_new(void)
-{
-	return (ml_string){.str = NULL, .len = 0, .capacity = 0};
-}
-
-ml_string
 ml_string_new_str(const char *str)
 {
-	ml_string ret = (ml_string){.str = NULL, .len = 0, .capacity = 0};
+	ml_string ret = (ml_string){0};
 	ml_string_concat_string(&ret, str);
 	return ret;
 }
