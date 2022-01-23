@@ -48,7 +48,7 @@ void *xgcrealloc(void *ptr, size_t size);
 /* file */
 
 typedef struct ml_file {
-  char *str;
+  const char *str;
   size_t pos;
 
   /* for unread */
@@ -62,7 +62,6 @@ typedef struct ml_read_char {
   size_t pos;
 } ml_read_char;
 
-ml_file ml_file_new_str(char *str);
 ml_read_char ml_file_read(ml_file *f);
 void ml_file_unread(ml_file *f, char c);
 
@@ -86,5 +85,10 @@ typedef struct ml_string {
 ml_string ml_string_new_str(const char *str);
 void ml_string_concat_char(ml_string *s, int c);
 void ml_string_concat_string(ml_string *s, const char *str);
+
+/* arithmetic */
+
+int chk_muli(int *dst, int a, int b);
+int chk_addi(int *dst, int a, int b);
 
 #endif /* MOUSELISP_H */
