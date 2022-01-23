@@ -141,4 +141,12 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
 void ml_object_debug_dump2(const char *filename, const char *line,
                            ml_object *root);
 
+/* parser */
+
+typedef struct ml_parser {
+  ml_file file;
+} ml_parser;
+
+ml_object *ml_parser_parse(ml_parser *p);
+
 #endif /* MOUSELISP_H */
