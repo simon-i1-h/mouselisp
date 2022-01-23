@@ -14,6 +14,8 @@
 #define ATTR_FMT_PRINTF(fmt, args) __attribute__((format(printf, fmt, args)))
 #define ATTR_NORETURN __attribute__((noreturn))
 
+#define countof(a) (sizeof(a) / sizeof(a[0]))
+
 void vlogmsgx(const char *filename, const char *line, int newline,
               const char *fmt, va_list ap);
 
@@ -48,6 +50,10 @@ void *xgcrealloc(void *ptr, size_t size);
 typedef struct ml_file {
   char *str;
   size_t pos;
+
+  /* for unread */
+  char buf[2];
+  size_t buf_pos;
 } ml_file;
 
 typedef struct ml_read_char {
@@ -57,7 +63,8 @@ typedef struct ml_read_char {
 } ml_read_char;
 
 ml_file ml_file_new_str(char *str);
-ml_read_char ml_file_read(ml_file *file);
+ml_read_char ml_file_read(ml_file *f);
+void ml_file_unread(ml_file *f, char c);
 
 /* string */
 
