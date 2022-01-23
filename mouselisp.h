@@ -62,18 +62,18 @@ ml_read_char ml_file_read(ml_file *file);
 /* string */
 
 typedef struct ml_string {
-	/*
-	 * nul文字終端。
-	 *
-	 * 文字列型を変化させるような関数呼び出しを行うと参照が無効に
-	 * なる可能性がある。reallocにより確保し直される可能性があるた
-	 * め。
-	 * https://cpprefjp.github.io/reference/string/basic_string/c_str.html
-	 */
-	char *str;
+  /*
+   * nul文字終端。
+   *
+   * 文字列型を変化させるような関数呼び出しを行うと参照が無効に
+   * なる可能性がある。reallocにより確保し直される可能性があるた
+   * め。
+   * https://cpprefjp.github.io/reference/string/basic_string/c_str.html
+   */
+  char *str;
 
-	size_t len;
-	size_t capacity;
+  size_t len;
+  size_t capacity;
 } ml_string;
 
 ml_string ml_string_new_str(const char *str);
