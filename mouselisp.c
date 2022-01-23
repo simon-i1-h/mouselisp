@@ -29,7 +29,7 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
   }
 
   ml_object_debug_dump(root);
-  fatal("evaluate failed.");
+  fatal("evaluate failed."); /* TODO */
 }
 
 /* main */
