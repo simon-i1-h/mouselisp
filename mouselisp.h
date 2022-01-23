@@ -122,9 +122,6 @@ typedef struct ml_object {
   } u;
 } ml_object;
 
-/* singleton */
-extern ml_object *the_nil;
-
 ml_object *ml_object_new_nil(void);
 ml_object *ml_object_new_cons(ml_object *car, ml_object *cdr);
 ml_object *ml_object_new_bool(int boolean);
@@ -156,5 +153,12 @@ typedef struct ml_machine {
 } ml_machine;
 
 ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
+
+/* init.c */
+
+/* singleton */
+extern ml_object *the_nil;
+
+void mouselisp_init(void);
 
 #endif /* MOUSELISP_H */

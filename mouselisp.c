@@ -1,8 +1,7 @@
 #include "mouselisp.h"
 
 int main(void) {
-  GC_INIT();
-  the_nil = ml_object_new_nil();
+  mouselisp_init();
 
   ml_object_debug_dump(the_nil);
 

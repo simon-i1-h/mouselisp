@@ -2,8 +2,6 @@
 
 #include "mouselisp.h"
 
-ml_object *the_nil;
-
 ml_object *ml_object_new_nil(void) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
   *ret = (ml_object){.tag = ML_OBJECT_NIL};
