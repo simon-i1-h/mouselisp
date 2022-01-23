@@ -161,4 +161,8 @@ extern ml_object *the_nil;
 
 void mouselisp_init(void);
 
+/* t/test.c */
+
+void test_main(void);
+
 #endif /* MOUSELISP_H */

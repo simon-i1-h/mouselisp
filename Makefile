@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Og -g3 -std=c17 -pedantic -Wimplicit-fallthrough \
 
 PROG = mouselisp
 SRCS = mouselisp.c util.c file.c string.c arith.c object.c parser.c machine.c \
-	init.c
+	init.c t/test.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(OBJS:.o=.d)
 GCNO = $(SRCS:.c=.gcno)
@@ -35,6 +35,6 @@ clean:
 		compile_commands.json
 
 test: all
-	./$(PROG)
+	./$(PROG) --test
 
 -include $(DEPS)
