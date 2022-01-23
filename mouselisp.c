@@ -125,10 +125,14 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
   }
 }
 
-void ml_object_debug_dump(ml_object *root) {
+#define ml_object_debug_dump(obj)                                            \
+  ml_object_debug_dump2(__FILE__, stringify(__LINE__), obj)
+
+void ml_object_debug_dump2(const char *filename, const char *line,
+                           ml_object *root) {
   ml_object *known_objs = the_nil;
 
-  logmsg("dump object:");
+  logmsg2(filename, line, "dump object:");
   rlogmsg("--------------------");
   ml_object_debug_dump_recur(root, &known_objs, 0);
   rlogmsg("--------------------");
@@ -140,28 +144,27 @@ typedef struct ml_machine {
   int fake;
 } ml_machine;
 
-void ml_machine_eval(ml_machine *machine, ml_object *root) {
-  /* check type */
+ml_object *ml_machine_eval(ml_machine *machine, ml_object *root) {
+  if (root->tag == ML_OBJECT_NUMBER)
+    return root;
+
   if (root->tag == ML_OBJECT_CONS &&
       root->u.cons.cdr->tag == ML_OBJECT_CONS &&
       root->u.cons.cdr->u.cons.cdr->tag == ML_OBJECT_CONS) {
     ml_object *f = root->u.cons.car;
-    ml_object *a = root->u.cons.cdr->u.cons.car;
-    ml_object *b = root->u.cons.cdr->u.cons.cdr->u.cons.car;
+    ml_object *a = ml_machine_eval(machine, root->u.cons.cdr->u.cons.car);
+    ml_object *b =
+        ml_machine_eval(machine, root->u.cons.cdr->u.cons.cdr->u.cons.car);
     if (f->tag == ML_OBJECT_NAME) {
       /* apply builtin functions */
       if (strcmp(f->u.str.str, "+") == 0 && a->tag == ML_OBJECT_NUMBER &&
-          b->tag == ML_OBJECT_NUMBER) {
-        ml_object *r = ml_object_new_number(a->u.num + b->u.num);
-        logmsg("evaluated:");
-        ml_object_debug_dump(r);
-        return;
-      }
+          b->tag == ML_OBJECT_NUMBER)
+        return ml_object_new_number(a->u.num + b->u.num);
     }
   }
 
-  logmsg("evaluate failed:");
   ml_object_debug_dump(root);
+  fatal("evaluate failed.");
 }
 
 /* main */
@@ -200,10 +203,19 @@ int main(void) {
   ml_object *t5_list_1 = ml_object_new_cons(t5_b, the_nil);
   ml_object *t5_list_2 = ml_object_new_cons(t5_a, t5_list_1);
   ml_object *t5_list_3 = ml_object_new_cons(t5_f, t5_list_2);
-  ml_machine_eval(&t5_machine, t5_list_3);
+  ml_object_debug_dump(ml_machine_eval(&t5_machine, t5_list_3));
 
   ml_object *t6_nil = ml_object_new_nil();
   ml_object_debug_dump(t6_nil);
+
+  ml_machine t7_machine = (ml_machine){0};
+  ml_object *t7_f = ml_object_new_name(ml_string_new_str("+"));
+  ml_object *t7_a = ml_object_new_number(25.5);
+  ml_object *t7_b = t5_list_3;
+  ml_object *t7_list_1 = ml_object_new_cons(t7_b, the_nil);
+  ml_object *t7_list_2 = ml_object_new_cons(t7_a, t7_list_1);
+  ml_object *t7_list_3 = ml_object_new_cons(t7_f, t7_list_2);
+  ml_object_debug_dump(ml_machine_eval(&t7_machine, t7_list_3));
 
   return 0;
 }
