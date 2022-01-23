@@ -6,7 +6,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-/* utilities */
+/* util.c */
 
 #define stringify2(s) #s
 #define stringify(s) stringify2(s)
@@ -45,7 +45,7 @@ void fatal2(const char *filename, const char *line, const char *fmt, ...);
 void *xgcmalloc(size_t size);
 void *xgcrealloc(void *ptr, size_t size);
 
-/* file */
+/* file.c */
 
 typedef struct ml_file {
   const char *str;
@@ -65,7 +65,7 @@ typedef struct ml_read_char {
 ml_read_char ml_file_read(ml_file *f);
 void ml_file_unread(ml_file *f, char c);
 
-/* string */
+/* string.c */
 
 typedef struct ml_string {
   /*
@@ -86,12 +86,12 @@ ml_string ml_string_new_str(const char *str);
 void ml_string_concat_char(ml_string *s, int c);
 void ml_string_concat_string(ml_string *s, const char *str);
 
-/* arithmetic */
+/* arith.c */
 
 int chk_muli(int *dst, int a, int b);
 int chk_addi(int *dst, int a, int b);
 
-/* object */
+/* object.c */
 
 typedef struct ml_object ml_object;
 
@@ -141,7 +141,7 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
 void ml_object_debug_dump2(const char *filename, const char *line,
                            ml_object *root);
 
-/* parser */
+/* parser.c */
 
 typedef struct ml_parser {
   ml_file file;
@@ -149,7 +149,7 @@ typedef struct ml_parser {
 
 ml_object *ml_parser_parse(ml_parser *p);
 
-/* machine */
+/* machine.c */
 
 typedef struct ml_machine {
   int fake;

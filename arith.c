@@ -1,3 +1,5 @@
+/* arithmetic operators */
+
 #include <limits.h>
 
 #include "mouselisp.h"
