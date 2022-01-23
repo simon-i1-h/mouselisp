@@ -149,7 +149,7 @@ void ml_machine_eval(ml_machine *machine, ml_object *root) {
     ml_object *a = root->u.cons.cdr->u.cons.car;
     ml_object *b = root->u.cons.cdr->u.cons.cdr->u.cons.car;
     if (f->tag == ML_OBJECT_NAME) {
-      /* builtin functions */
+      /* apply builtin functions */
       if (strcmp(f->u.str.str, "+") == 0 && a->tag == ML_OBJECT_NUMBER &&
           b->tag == ML_OBJECT_NUMBER) {
         ml_object *r = ml_object_new_number(a->u.num + b->u.num);
