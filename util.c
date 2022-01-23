@@ -49,14 +49,12 @@ void fatal2(const char *filename, const char *line, const char *fmt, ...) {
   exit(1);
 }
 
-void *
-xgcmalloc(size_t size)
-{
-	void *ret = GC_MALLOC(size);
-	if (ret == NULL)
-		fatal("GC_MALLOC");
+void *xgcmalloc(size_t size) {
+  void *ret = GC_MALLOC(size);
+  if (ret == NULL)
+    fatal("GC_MALLOC");
 
-	return ret;
+  return ret;
 }
 
 /*
@@ -66,12 +64,10 @@ xgcmalloc(size_t size)
  *   ptr = xgcrealloc(ptr, newsize)
  *
  */
-void *
-xgcrealloc(void *ptr, size_t size)
-{
-	void *ret = GC_REALLOC(ptr, size);
-	if (ret == NULL)
-		fatal("GC_REALLOC");
+void *xgcrealloc(void *ptr, size_t size) {
+  void *ret = GC_REALLOC(ptr, size);
+  if (ret == NULL)
+    fatal("GC_REALLOC");
 
-	return ret;
+  return ret;
 }
