@@ -149,4 +149,12 @@ typedef struct ml_parser {
 
 ml_object *ml_parser_parse(ml_parser *p);
 
+/* machine */
+
+typedef struct ml_machine {
+  int fake;
+} ml_machine;
+
+ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
+
 #endif /* MOUSELISP_H */
