@@ -91,4 +91,54 @@ void ml_string_concat_string(ml_string *s, const char *str);
 int chk_muli(int *dst, int a, int b);
 int chk_addi(int *dst, int a, int b);
 
+/* object */
+
+typedef struct ml_object ml_object;
+
+typedef struct ml_cons {
+  ml_object *car;
+  ml_object *cdr;
+} ml_cons;
+
+/*
+ * TODO: byte (array)
+ */
+typedef enum ml_object_tag {
+  ML_OBJECT_NIL,
+  ML_OBJECT_CONS,
+  ML_OBJECT_BOOL,
+  ML_OBJECT_NUMBER,
+  ML_OBJECT_STRING,
+  ML_OBJECT_NAME
+} ml_object_tag;
+
+typedef struct ml_object {
+  ml_object_tag tag;
+  union {
+    ml_cons cons;
+    int boolean;
+    double num;
+    ml_string str; /* string or name */
+  } u;
+} ml_object;
+
+/* singleton */
+extern ml_object *the_nil;
+
+ml_object *ml_object_new_nil(void);
+ml_object *ml_object_new_cons(ml_object *car, ml_object *cdr);
+ml_object *ml_object_new_bool(int boolean);
+ml_object *ml_object_new_number(double num);
+ml_object *ml_object_new_string(ml_string str);
+ml_object *ml_object_new_name(ml_string str);
+int ml_list_exists(ml_object *list, ml_object *ptr);
+void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
+                                int depth);
+
+#define ml_object_debug_dump(obj)                                            \
+  ml_object_debug_dump2(__FILE__, stringify(__LINE__), obj)
+
+void ml_object_debug_dump2(const char *filename, const char *line,
+                           ml_object *root);
+
 #endif /* MOUSELISP_H */
