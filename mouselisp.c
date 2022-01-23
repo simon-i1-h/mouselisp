@@ -1,5 +1,6 @@
 #include <inttypes.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "mouselisp.h"
 
@@ -137,6 +138,30 @@ typedef struct ml_machine {
   int fake;
 } ml_machine;
 
+void ml_machine_eval(ml_machine *machine, ml_object *root) {
+  /* check type */
+  if (root->tag == ML_OBJECT_CONS &&
+      root->u.cons.cdr->tag == ML_OBJECT_CONS &&
+      root->u.cons.cdr->u.cons.cdr->tag == ML_OBJECT_CONS) {
+    ml_object *f = root->u.cons.car;
+    ml_object *a = root->u.cons.cdr->u.cons.car;
+    ml_object *b = root->u.cons.cdr->u.cons.cdr->u.cons.car;
+    if (f->tag == ML_OBJECT_NAME) {
+      /* builtin functions */
+      if (strcmp(f->u.str.str, "+") == 0 && a->tag == ML_OBJECT_NUMBER &&
+          b->tag == ML_OBJECT_NUMBER) {
+        ml_object *r = ml_object_new_number(a->u.num + b->u.num);
+        logmsg("evaled:");
+        ml_object_debug_dump(r);
+        return;
+      }
+    }
+  }
+
+  logmsg("eval failed:");
+  ml_object_debug_dump(root);
+}
+
 /* main */
 
 int main(void) {
@@ -161,9 +186,19 @@ int main(void) {
       ml_object_new_string(ml_string_new_str("baz")), t4_list_2);
   ml_object *t4_list_4 = ml_object_new_cons(
       ml_object_new_string(ml_string_new_str("qux")), t4_list_3);
-  ml_object *t4_list_5 = ml_object_new_cons(ml_object_new_string(ml_string_new_str("quux")), t4_list_4);
+  ml_object *t4_list_5 = ml_object_new_cons(
+      ml_object_new_string(ml_string_new_str("quux")), t4_list_4);
   t4_list_2->u.cons.car = t4_list_4;
   ml_object_debug_dump(t4_list_5);
+
+  ml_machine t5_machine = (ml_machine){0};
+  ml_object *t5_f = ml_object_new_name(ml_string_new_str("+"));
+  ml_object *t5_a = ml_object_new_number(32);
+  ml_object *t5_b = ml_object_new_number(-0.5);
+  ml_object *t5_list_1 = ml_object_new_cons(t5_b, the_nil);
+  ml_object *t5_list_2 = ml_object_new_cons(t5_a, t5_list_1);
+  ml_object *t5_list_3 = ml_object_new_cons(t5_f, t5_list_2);
+  ml_machine_eval(&t5_machine, t5_list_3);
 
   return 0;
 }
