@@ -101,6 +101,8 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
 
   switch (obj->tag) {
   case ML_OBJECT_NIL:
+    if (obj != the_nil)
+      rlogmsgf("INVALID ");
     rlogmsg("NIL");
     break;
   case ML_OBJECT_BOOL:
@@ -199,6 +201,9 @@ int main(void) {
   ml_object *t5_list_2 = ml_object_new_cons(t5_a, t5_list_1);
   ml_object *t5_list_3 = ml_object_new_cons(t5_f, t5_list_2);
   ml_machine_eval(&t5_machine, t5_list_3);
+
+  ml_object *t6_nil = ml_object_new_nil();
+  ml_object_debug_dump(t6_nil);
 
   return 0;
 }
