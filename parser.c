@@ -112,9 +112,14 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
   }
 }
 
-/* TODO: NULLを使わず例外を使うかも */
+/*
+ * TODO: NULLを使わず例外を使うかも
+ *
+ * TODO: パーサーというものの特性とEOFなどを考えると、やはり何にも当て
+ * はまらないときに識別子と解釈するのは避けて、エラーにしたい。識別子
+ * の構文も規定しておこう。
+ */
 ml_object *ml_parser_parse_expr(ml_parser *p) {
-
   enum { STATE_START, STATE_LITERAL, STATE_NAME } st = STATE_START;
 
   ml_read_char c;
