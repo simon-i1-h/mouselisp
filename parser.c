@@ -6,6 +6,10 @@ inline static int is_whitespace(unsigned char c) {
   return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
+inline static int is_end_value(unsigned char c) {
+  return is_whitespace(c) || c == '(' || c == ')';
+}
+
 /* TODO: 小数も扱えるようにしたい。 */
 ml_object *ml_parser_parse_number(ml_parser *p) {
   enum { STATE_START, STATE_ZERO, STATE_INTERGER } st = STATE_START;
@@ -35,12 +39,20 @@ ml_object *ml_parser_parse_number(ml_parser *p) {
       }
       goto invalid;
     case STATE_ZERO:
-      if (c.eof || is_whitespace(c.c) || c.c == ')')
+      if (c.eof)
         goto valid;
+      if (is_end_value(c.c)) {
+        ml_file_unread(&p->file, c.c);
+        goto valid;
+      }
       goto invalid;
     case STATE_INTERGER:
-      if (c.eof || is_whitespace(c.c) || c.c == ')')
+      if (c.eof)
         goto valid;
+      if (is_end_value(c.c)) {
+        ml_file_unread(&p->file, c.c);
+        goto valid;
+      }
       if (c.c >= '0' && c.c <= '9') {
         digit = sign * (c.c - '0');
         if (chk_muli(&shift, 10, ret) != 0)
@@ -56,7 +68,6 @@ ml_object *ml_parser_parse_number(ml_parser *p) {
 invalid:
   return NULL;
 valid:
-  ml_file_unread(&p->file, c.c);
   return ml_object_new_number(ret);
 }
 
