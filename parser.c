@@ -42,40 +42,47 @@ ml_object *ml_parser_parse_number(ml_parser *p) {
 
     switch (st) {
     case STATE_START:
+      if (c.eof)
+        goto invalid;
+
       if (c.c == '0') {
         st = STATE_ZERO;
         break;
       }
+
       if (c.c >= '1' && c.c <= '9') {
         ret += c.c - '0';
         st = STATE_INTERGER;
         break;
       }
+
       if (c.c == '+') {
         st = STATE_INTERGER;
         break;
       }
+
       if (c.c == '-') {
         sign = -1;
         st = STATE_INTERGER;
         break;
       }
+
       goto invalid;
     case STATE_ZERO:
-      if (c.eof)
-        goto valid;
-      if (is_end_value(c.c)) {
-        ml_file_unread(&p->file, c.c);
-        goto valid;
+      if (c.eof || is_end_value(c.c)) {
+        if (!c.eof)
+          ml_file_unread(&p->file, c.c);
+        return ml_object_new_number(ret);
       }
+
       goto invalid;
     case STATE_INTERGER:
-      if (c.eof)
-        goto valid;
-      if (is_end_value(c.c)) {
-        ml_file_unread(&p->file, c.c);
-        goto valid;
+      if (c.eof || is_end_value(c.c)) {
+        if (!c.eof)
+          ml_file_unread(&p->file, c.c);
+        return ml_object_new_number(ret);
       }
+
       if (c.c >= '0' && c.c <= '9') {
         digit = sign * (c.c - '0');
         if (chk_muli(&shift, 10, ret) != 0)
@@ -84,14 +91,13 @@ ml_object *ml_parser_parse_number(ml_parser *p) {
           goto invalid;
         break;
       }
+
       goto invalid;
     }
   }
 
 invalid:
   return NULL;
-valid:
-  return ml_object_new_number(ret);
 }
 
 ml_object *ml_parser_parse_expr(ml_parser *p);
@@ -149,7 +155,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
     switch (st) {
     case STATE_START:
       if (c.eof)
-        return NULL;
+        goto invalid;
       if (is_whitespace(c.c))
         break;
 
