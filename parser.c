@@ -239,23 +239,35 @@ invalid:
   return NULL;
 }
 
-/*
- * TODO: 単一のトップレベルオブジェクトではなく、トップレベルオブジェ
- * クトのリストを返す。トップレベルオブジェクトがひとつもない場合はnil。
- * というのも、例えば入力が空の場合は、エラーではなく何もしないのが正
- * しい。
- */
 ml_object *ml_parser_parse(ml_parser *p) {
   ml_read_char c;
+  ml_object *expr;
+  ml_object *root = the_nil;
+  ml_object *tail = root;
 
   for (;;) {
     c = ml_file_read(&p->file);
+    /* TODO: 最初のリスト(car)だけでなくすべてのリスト(root)を返す。 */
     if (c.eof)
-      return NULL;
+      return root->u.cons.car;
     if (is_whitespace(c.c))
       continue;
+
     ml_file_unread(&p->file, c.c);
-    break;
+    expr = ml_parser_parse_expr(p);
+    if (expr != NULL) {
+      if (root == the_nil) {
+        root = tail = ml_object_new_cons(expr, the_nil);
+      } else {
+        tail->u.cons.cdr = ml_object_new_cons(expr, the_nil);
+        tail = tail->u.cons.cdr;
+      }
+      continue;
+    }
+
+    goto invalid;
   }
-  return ml_parser_parse_expr(p);
+
+invalid:
+  return NULL;
 }
