@@ -105,7 +105,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p);
 ml_object *ml_parser_parse_list(ml_parser *p) {
   enum { STATE_START, STATE_LIST } st = STATE_START;
   ml_read_char c;
-  ml_object *o;
+  ml_object *expr;
   ml_object *root = the_nil;
   ml_object *tail = root;
 
@@ -136,12 +136,12 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
       }
 
       ml_file_unread(&p->file, c.c);
-      o = ml_parser_parse_expr(p);
-      if (o != NULL) {
+      expr = ml_parser_parse_expr(p);
+      if (expr != NULL) {
         if (root == the_nil) {
-          root = tail = ml_object_new_cons(o, the_nil);
+          root = tail = ml_object_new_cons(expr, the_nil);
         } else {
-          tail->u.cons.cdr = ml_object_new_cons(o, the_nil);
+          tail->u.cons.cdr = ml_object_new_cons(expr, the_nil);
           tail = tail->u.cons.cdr;
         }
         break;
