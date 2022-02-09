@@ -10,6 +10,25 @@ inline static int is_end_value(unsigned char c) {
   return is_whitespace(c) || c == '(' || c == ')';
 }
 
+inline static int is_sign(unsigned char c) {
+  return (c == '+') || (c == '-');
+}
+
+inline static int is_name(unsigned char c) {
+  return (c == '!') || (c == '$') || (c == '%') || (c == '&') || (c == '*') ||
+         (c == '/') || (c == ':') || (c == '<') || (c == '=') || (c == '>') ||
+         (c == '?') || (c == '^') || (c == '_') || (c == '~') ||
+         (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+inline static int is_number(unsigned char c) {
+  return c >= '0' && c <= '9';
+}
+
+inline static int is_name_rest(unsigned char c) {
+  return is_sign(c) || is_name(c) || is_number(c);
+}
+
 /* TODO: 小数も扱えるようにしたい。 */
 ml_object *ml_parser_parse_number(ml_parser *p) {
   enum { STATE_START, STATE_ZERO, STATE_INTERGER } st = STATE_START;
@@ -29,6 +48,10 @@ ml_object *ml_parser_parse_number(ml_parser *p) {
       }
       if (c.c >= '1' && c.c <= '9') {
         ret += c.c - '0';
+        st = STATE_INTERGER;
+        break;
+      }
+      if (c.c == '+') {
         st = STATE_INTERGER;
         break;
       }
@@ -120,7 +143,7 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
  * の構文も規定しておこう。
  */
 ml_object *ml_parser_parse_expr(ml_parser *p) {
-  enum { STATE_START, STATE_LITERAL, STATE_NAME } st = STATE_START;
+  enum { STATE_START, STATE_LITERAL_NUMBER, STATE_NAME } st = STATE_START;
 
   ml_read_char c;
   char first;
@@ -135,47 +158,84 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
         return NULL;
       if (is_whitespace(c.c))
         break;
+
       if (c.c == '(') {
         ml_file_unread(&p->file, c.c);
         return ml_parser_parse_list(p);
       }
-      if ((c.c >= '0' && c.c <= '9') || (c.c == '-')) {
+      if (is_number(c.c) || is_sign(c.c)) {
         first = c.c;
-        st = STATE_LITERAL;
+        st = STATE_LITERAL_NUMBER;
         break;
       }
 
-      ml_string_concat_char(&strbuf, c.c);
-      st = STATE_NAME;
-      break;
-    case STATE_LITERAL:
-      if (c.eof) {
-        if (first >= '0' && first <= '9') {
+      if (is_name(c.c)) {
+        ml_string_concat_char(&strbuf, c.c);
+        st = STATE_NAME;
+        break;
+      }
+
+      goto invalid;
+    case STATE_LITERAL_NUMBER:
+      if (c.eof || is_end_value(c.c)) {
+        if (!c.eof)
+          ml_file_unread(&p->file, c.c);
+        if (is_sign(first)) {
+          ml_string_concat_char(&strbuf, first);
+          return ml_object_new_name(strbuf);
+        } else {
           ml_file_unread(&p->file, first);
           return ml_parser_parse_number(p);
         }
-        ml_string_concat_char(&strbuf, first);
-        return ml_object_new_name(strbuf);
       }
 
-      if ((first >= '0' && first <= '9') ||
-          (first == '-' && (c.c >= '1' && c.c <= '9'))) {
+      if (is_number(c.c)) {
         ml_file_unread(&p->file, c.c);
         ml_file_unread(&p->file, first);
         return ml_parser_parse_number(p);
       }
 
-      ml_string_concat_char(&strbuf, first);
-      ml_string_concat_char(&strbuf, c.c);
-      st = STATE_NAME;
-      break;
+      if (is_name(c.c) || is_sign(c.c)) {
+        if (is_sign(first)) {
+          ml_string_concat_char(&strbuf, first);
+          ml_string_concat_char(&strbuf, c.c);
+          st = STATE_NAME;
+          break;
+        }
+      }
+
+      goto invalid;
     case STATE_NAME:
-      if (c.eof || is_whitespace(c.c))
+      if (c.eof || is_end_value(c.c)) {
+        if (!c.eof)
+          ml_file_unread(&p->file, c.c);
         return ml_object_new_name(strbuf);
-      ml_string_concat_char(&strbuf, c.c);
-      break;
+      }
+
+      if (is_name_rest(c.c)) {
+        ml_string_concat_char(&strbuf, c.c);
+        break;
+      }
+
+      goto invalid;
     }
   }
+
+invalid:
+  return NULL;
 }
 
-ml_object *ml_parser_parse(ml_parser *p) { return ml_parser_parse_expr(p); }
+ml_object *ml_parser_parse(ml_parser *p) {
+  ml_read_char c;
+
+  for (;;) {
+    c = ml_file_read(&p->file);
+    if (c.eof)
+      return NULL;
+    if (is_whitespace(c.c))
+      continue;
+    ml_file_unread(&p->file, c.c);
+    break;
+  }
+  return ml_parser_parse_expr(p);
+}
