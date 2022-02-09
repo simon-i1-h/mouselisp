@@ -111,34 +111,48 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
 
   for (;;) {
     c = ml_file_read(&p->file);
-    if (c.eof)
-      return NULL;
-    if (is_whitespace(c.c))
-      continue;
 
     switch (st) {
     case STATE_START:
-      if (c.c != '(')
-        return NULL;
-      st = STATE_LIST;
-      break;
+      if (c.eof)
+        goto invalid;
+
+      if (c.c == '(') {
+        st = STATE_LIST;
+        break;
+      }
+
+      goto invalid;
     case STATE_LIST:
-      if (c.c == ')')
-        return root == the_nil ? NULL : root;
+      if (c.eof)
+        goto invalid;
+      if (is_whitespace(c.c))
+        continue;
+
+      if (c.c == ')') {
+        if (root != the_nil)
+          return root;
+        goto invalid;
+      }
 
       ml_file_unread(&p->file, c.c);
       o = ml_parser_parse_expr(p);
-      if (o == NULL)
-        return NULL;
-      if (root == the_nil) {
-        root = tail = ml_object_new_cons(o, the_nil);
-      } else {
-        tail->u.cons.cdr = ml_object_new_cons(o, the_nil);
-        tail = tail->u.cons.cdr;
+      if (o != NULL) {
+        if (root == the_nil) {
+          root = tail = ml_object_new_cons(o, the_nil);
+        } else {
+          tail->u.cons.cdr = ml_object_new_cons(o, the_nil);
+          tail = tail->u.cons.cdr;
+        }
+        break;
       }
-      break;
+
+      goto invalid;
     }
   }
+
+invalid:
+  return NULL;
 }
 
 /* TODO: NULLを使わず例外を使うかも */
