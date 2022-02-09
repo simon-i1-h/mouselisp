@@ -135,13 +135,7 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
   }
 }
 
-/*
- * TODO: NULLを使わず例外を使うかも
- *
- * TODO: パーサーというものの特性とEOFなどを考えると、やはり何にも当て
- * はまらないときに識別子と解釈するのは避けて、エラーにしたい。識別子
- * の構文も規定しておこう。
- */
+/* TODO: NULLを使わず例外を使うかも */
 ml_object *ml_parser_parse_expr(ml_parser *p) {
   enum { STATE_START, STATE_LITERAL_NUMBER, STATE_NAME } st = STATE_START;
 
@@ -225,6 +219,12 @@ invalid:
   return NULL;
 }
 
+/*
+ * TODO: 単一のトップレベルオブジェクトではなく、トップレベルオブジェ
+ * クトのリストを返す。トップレベルオブジェクトがひとつもない場合はnil。
+ * というのも、例えば入力が空の場合は、エラーではなく何もしないのが正
+ * しい。
+ */
 ml_object *ml_parser_parse(ml_parser *p) {
   ml_read_char c;
 
