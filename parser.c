@@ -30,7 +30,7 @@ inline static int is_name_rest(unsigned char c) {
 }
 
 /* TODO: 小数も扱えるようにしたい。 */
-ml_object *ml_parser_parse_number(ml_parser *p) {
+ml_object *ml_parser_parse_literal_number(ml_parser *p) {
   enum { STATE_START, STATE_ZERO, STATE_INTERGER } st = STATE_START;
   ml_read_char c;
   int sign = 1;
@@ -199,14 +199,14 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
           return ml_object_new_name(strbuf);
         } else {
           ml_file_unread(&p->file, first);
-          return ml_parser_parse_number(p);
+          return ml_parser_parse_literal_number(p);
         }
       }
 
       if (is_number(c.c)) {
         ml_file_unread(&p->file, c.c);
         ml_file_unread(&p->file, first);
-        return ml_parser_parse_number(p);
+        return ml_parser_parse_literal_number(p);
       }
 
       if (is_name(c.c) || is_sign(c.c)) {
