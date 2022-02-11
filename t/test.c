@@ -25,7 +25,6 @@ int ptrarr_in(uintptr_t x, uintptr_t *array, size_t len, int nxs) {
 void test_object(void) {
   /* nil */
   ml_test(the_nil->tag == ML_OBJECT_NIL);
-  // ml_object_debug_dump(the_nil);
 
   /* number */
   {
@@ -46,14 +45,14 @@ void test_object(void) {
 
   /* bool */
   {
-    ml_object *num = ml_object_new_bool(0);
-    ml_test(num->tag == ML_OBJECT_BOOL);
-    ml_test(num->u.boolean == 0);
+    ml_object *b = ml_object_new_bool(0);
+    ml_test(b->tag == ML_OBJECT_BOOL);
+    ml_test(b->u.boolean == 0);
   }
   {
-    ml_object *num = ml_object_new_bool(1);
-    ml_test(num->tag == ML_OBJECT_BOOL);
-    ml_test(num->u.boolean == 1);
+    ml_object *b = ml_object_new_bool(1);
+    ml_test(b->tag == ML_OBJECT_BOOL);
+    ml_test(b->u.boolean == 1);
   }
 
   /* string */
@@ -85,7 +84,6 @@ void test_object(void) {
     ml_test(ptrarr_in((uintptr_t)car, ptrs, countof(ptrs), 1));
     ml_test(ptrarr_in((uintptr_t)cdr, ptrs, countof(ptrs), 1));
     ml_test(ptrarr_in((uintptr_t)cons, ptrs, countof(ptrs), 1));
-    // ml_object_debug_dump(cons);
   }
 
   /* same reference */
@@ -97,25 +95,7 @@ void test_object(void) {
     ml_test(ptrarr_in((uintptr_t)b, ptrs, countof(ptrs), 2));
     ml_test(ptrarr_in((uintptr_t)cons, ptrs, countof(ptrs), 1));
     ml_test(cons->u.cons.car == cons->u.cons.cdr);
-    // ml_object_debug_dump(t3_cons);
   }
-
-  /* circular list */
-// TODO
-// これが重要なのはちゃんとダンプできるのかということなので、このテストからは除いていいかもしれない。
-#if 0
-  ml_object *t4_list_1 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("foo")), the_nil);
-  ml_object *t4_list_2 = ml_object_new_cons(the_nil, t4_list_1);
-  ml_object *t4_list_3 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("baz")), t4_list_2);
-  ml_object *t4_list_4 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("qux")), t4_list_3);
-  ml_object *t4_list_5 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("quux")), t4_list_4);
-  t4_list_2->u.cons.car = t4_list_4;
-  // ml_object_debug_dump(t4_list_5);
-#endif
 }
 
 /* machine.c */
@@ -132,6 +112,7 @@ void test_machine(void) {
     ml_object *result = ml_machine_eval(&machine, list1);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 31.5);
+    // TODO
     // ml_object_debug_dump(result);
   }
 }
@@ -146,6 +127,7 @@ void test_top(void) {
     ml_object *result = ml_machine_eval(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 8.0);
+    // TODO
     // ml_object_debug_dump(root);
     // ml_object_debug_dump(result);
   }
@@ -160,20 +142,67 @@ void test_top(void) {
     ml_object *result = ml_machine_eval(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 6.0);
+    // TODO
     // ml_object_debug_dump(root);
     // ml_object_debug_dump(result);
   }
 }
 
 void test_main(void) {
-// TODO これはダンプのテストなのでPythonでって思ったけど、invalid nil
-// だと難しいな。どうしようか
-#if 0
-  ml_object *t6_nil = ml_object_new_nil();
-  // ml_object_debug_dump(t6_nil);
-#endif
-
   test_object();
   test_machine();
   test_top();
+}
+
+void test_object_dump_main(const char *testname) {
+  if (strcmp(testname, "valid-nil") == 0) {
+    ml_object_debug_dump(the_nil);
+  } else if (strcmp(testname, "invalid-nil") == 0) {
+    ml_object *invalid_nil = ml_object_new_nil();
+    ml_object_debug_dump(invalid_nil);
+  } else if (strcmp(testname, "number") == 0) {
+    ml_object *num = ml_object_new_number(42.0);
+    ml_object_debug_dump(num);
+  } else if (strcmp(testname, "bool") == 0) {
+    ml_object *b = ml_object_new_bool(1);
+    ml_object_debug_dump(b);
+  } else if (strcmp(testname, "string") == 0) {
+    ml_object *str = ml_object_new_string(ml_string_new_str("dog"));
+    ml_object_debug_dump(str);
+  } else {
+    fatal("unknown testname: %s", testname);
+  }
+
+/* TODO */
+#if 0
+  /* cons */
+  {
+    ml_object *car = ml_object_new_number(-42.0);
+    ml_object *cdr = ml_object_new_bool(0);
+    ml_object *cons = ml_object_new_cons(car, cdr);
+    ml_object_debug_dump(cons);
+  }
+
+  /* same reference */
+  {
+    ml_object *b = ml_object_new_bool(1);
+    ml_object *cons = ml_object_new_cons(b, b);
+    ml_object_debug_dump(cons);
+  }
+
+  /* circular list */
+// TODO
+// これが重要なのはちゃんとダンプできるのかということなので、このテストからは除いていいかもしれない。
+  ml_object *t4_list_1 = ml_object_new_cons(
+      ml_object_new_string(ml_string_new_str("foo")), the_nil);
+  ml_object *t4_list_2 = ml_object_new_cons(the_nil, t4_list_1);
+  ml_object *t4_list_3 = ml_object_new_cons(
+      ml_object_new_string(ml_string_new_str("baz")), t4_list_2);
+  ml_object *t4_list_4 = ml_object_new_cons(
+      ml_object_new_string(ml_string_new_str("qux")), t4_list_3);
+  ml_object *t4_list_5 = ml_object_new_cons(
+      ml_object_new_string(ml_string_new_str("quux")), t4_list_4);
+  t4_list_2->u.cons.car = t4_list_4;
+  // ml_object_debug_dump(t4_list_5);
+#endif
 }

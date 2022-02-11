@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 
 #include "mouselisp.h"
@@ -10,15 +11,11 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  if (argc > 2 && strcmp(argv[1], "--dump") == 0) {
-    ml_parser parser =
-        (ml_parser){.file = (ml_file){.str = argv[2]}};
-    ml_object *root = ml_parser_parse(&parser);
-    if (root == NULL)
-      fatal("parse");
-    ml_object_debug_dump(root);
+  if (argc > 2 && strcmp(argv[1], "--test-object-dump") == 0) {
+    test_object_dump_main(argv[2]);
     return 0;
   }
 
+  fprintf(stderr, "unknown options.");
   return 1;
 }

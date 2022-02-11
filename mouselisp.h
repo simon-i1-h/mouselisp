@@ -165,5 +165,6 @@ void mouselisp_init(void);
 /* t/test.c */
 
 void test_main(void);
+void test_object_dump_main(const char *testname);
 
 #endif /* MOUSELISP_H */
