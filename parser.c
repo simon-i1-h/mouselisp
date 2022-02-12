@@ -1,7 +1,5 @@
 #include "mouselisp.h"
 
-/* TODO: レキサーとパーサーを分離。いやしないかも。 */
-
 inline static int is_whitespace(unsigned char c) {
   return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
@@ -247,9 +245,8 @@ ml_object *ml_parser_parse(ml_parser *p) {
 
   for (;;) {
     c = ml_file_read(&p->file);
-    /* TODO: 最初のリスト(car)だけでなくすべてのリスト(root)を返す。 */
     if (c.eof)
-      return root->u.cons.car;
+      return root;
     if (is_whitespace(c.c))
       continue;
 

@@ -120,7 +120,7 @@ void test_top(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root);
+    ml_object *result = ml_machine_eval(&machine, root->u.cons.car);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 8.0);
   }
@@ -132,7 +132,7 @@ void test_top(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root);
+    ml_object *result = ml_machine_eval(&machine, root->u.cons.car);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 6.0);
   }
