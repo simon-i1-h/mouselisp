@@ -139,8 +139,8 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
         if (root == the_nil) {
           root = tail = ml_object_new_cons(expr, the_nil);
         } else {
-          tail->u.cons.cdr = ml_object_new_cons(expr, the_nil);
-          tail = tail->u.cons.cdr;
+          tail->cons.cdr = ml_object_new_cons(expr, the_nil);
+          tail = tail->cons.cdr;
         }
         break;
       }
@@ -256,8 +256,8 @@ ml_object *ml_parser_parse(ml_parser *p) {
       if (root == the_nil) {
         root = tail = ml_object_new_cons(expr, the_nil);
       } else {
-        tail->u.cons.cdr = ml_object_new_cons(expr, the_nil);
-        tail = tail->u.cons.cdr;
+        tail->cons.cdr = ml_object_new_cons(expr, the_nil);
+        tail = tail->cons.cdr;
       }
       continue;
     }

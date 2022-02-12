@@ -120,7 +120,7 @@ typedef struct ml_object {
     int boolean;
     double num;
     ml_string str; /* string or name */
-  } u;
+  };
 } ml_object;
 
 ml_object *ml_object_new_nil(void);
