@@ -19,8 +19,6 @@ int ptrarr_in(uintptr_t x, uintptr_t *array, size_t len, int nxs) {
   return count == nxs;
 }
 
-/* TODO: debug dumpテストはPythonスクリプトで行う。 */
-
 /* object.c */
 void test_object(void) {
   /* nil */
@@ -112,8 +110,6 @@ void test_machine(void) {
     ml_object *result = ml_machine_eval(&machine, list1);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 31.5);
-    // TODO
-    // ml_object_debug_dump(result);
   }
 }
 
@@ -127,9 +123,6 @@ void test_top(void) {
     ml_object *result = ml_machine_eval(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 8.0);
-    // TODO
-    // ml_object_debug_dump(root);
-    // ml_object_debug_dump(result);
   }
 
   /* nested */
@@ -142,9 +135,6 @@ void test_top(void) {
     ml_object *result = ml_machine_eval(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->u.num == 6.0);
-    // TODO
-    // ml_object_debug_dump(root);
-    // ml_object_debug_dump(result);
   }
 }
 
@@ -169,40 +159,25 @@ void test_object_dump_main(const char *testname) {
   } else if (strcmp(testname, "string") == 0) {
     ml_object *str = ml_object_new_string(ml_string_new_str("dog"));
     ml_object_debug_dump(str);
-  } else {
-    fatal("unknown testname: %s", testname);
-  }
-
-/* TODO */
-#if 0
-  /* cons */
-  {
+  } else if (strcmp(testname, "cons") == 0) {
     ml_object *car = ml_object_new_number(-42.0);
     ml_object *cdr = ml_object_new_bool(0);
     ml_object *cons = ml_object_new_cons(car, cdr);
     ml_object_debug_dump(cons);
-  }
-
-  /* same reference */
-  {
+  } else if (strcmp(testname, "same-reference") == 0) {
     ml_object *b = ml_object_new_bool(1);
     ml_object *cons = ml_object_new_cons(b, b);
     ml_object_debug_dump(cons);
+  } else if (strcmp(testname, "circular-list") == 0) {
+    ml_object *list3 = ml_object_new_cons(
+        ml_object_new_string(ml_string_new_str("3rd")), the_nil);
+    ml_object *list2 = ml_object_new_cons(
+        ml_object_new_string(ml_string_new_str("2nd")), list3);
+    ml_object *list1 = ml_object_new_cons(
+        ml_object_new_string(ml_string_new_str("1st")), list2);
+    list3->u.cons.cdr = list1;
+    ml_object_debug_dump(list1);
+  } else {
+    fatal("unknown testname: %s", testname);
   }
-
-  /* circular list */
-// TODO
-// これが重要なのはちゃんとダンプできるのかということなので、このテストからは除いていいかもしれない。
-  ml_object *t4_list_1 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("foo")), the_nil);
-  ml_object *t4_list_2 = ml_object_new_cons(the_nil, t4_list_1);
-  ml_object *t4_list_3 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("baz")), t4_list_2);
-  ml_object *t4_list_4 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("qux")), t4_list_3);
-  ml_object *t4_list_5 = ml_object_new_cons(
-      ml_object_new_string(ml_string_new_str("quux")), t4_list_4);
-  t4_list_2->u.cons.car = t4_list_4;
-  // ml_object_debug_dump(t4_list_5);
-#endif
 }

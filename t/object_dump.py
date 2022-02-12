@@ -16,6 +16,13 @@ def test_match(pattern, testname):
     return match
 
 
+def test(b, testname):
+    if not b:
+        print(f'test failed: {testname}', file=sys.stderr)
+        sys.exit(1)
+
+
+# nil
 test_match(
     r'\A'
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
@@ -34,6 +41,8 @@ test_match(
     r'\Z',
     'invalid-nil'
 )
+
+# number
 test_match(
     r'\A'
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
@@ -43,6 +52,8 @@ test_match(
     r'\Z',
     'number'
 )
+
+# bool
 test_match(
     r'\A'
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
@@ -52,6 +63,8 @@ test_match(
     r'\Z',
     'bool'
 )
+
+# string
 test_match(
     r'\A'
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
@@ -61,3 +74,58 @@ test_match(
     r'\Z',
     'string'
 )
+
+# cons
+test_match(
+    r'\A'
+    r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
+    r'--------------------\n'
+    r'[0-9a-f]+ CONS:\n'
+    r'  [0-9a-f]+ NUMBER: -42\.0+\n'
+    r'  [0-9a-f]+ BOOL: false\n'
+    r'--------------------\n'
+    r'\Z',
+    'cons'
+)
+
+# same reference
+m = test_match(
+    r'\A'
+    r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
+    r'--------------------\n'
+    r'(?P<cons>[0-9a-f]+) CONS:\n'
+    r'  (?P<same1>[0-9a-f]+) BOOL: true\n'
+    r'  (?P<same2>[0-9a-f]+) \(dup\)\n'
+    r'--------------------\n'
+    r'\Z',
+    'same-reference'
+)
+test(m['cons'] != m['same1'], 'same-reference')
+test(m['cons'] != m['same2'], 'same-reference')
+test(m['same1'] == m['same2'], 'same-reference')
+
+# circular list
+m = test_match(
+    r'\A'
+    r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
+    r'--------------------\n'
+    r'(?P<list1>[0-9a-f]+) CONS:\n'
+    r'  (?P<elelm1>[0-9a-f]+) STRING: 1st\n'
+    r'  (?P<list2>[0-9a-f]+) CONS:\n'
+    r'    (?P<elelm2>[0-9a-f]+) STRING: 2nd\n'
+    r'    (?P<list3>[0-9a-f]+) CONS:\n'
+    r'      (?P<elem3>[0-9a-f]+) STRING: 3rd\n'
+    r'      (?P<circular>[0-9a-f]+) \(dup\)\n'
+    r'--------------------\n'
+    r'\Z',
+    'circular-list'
+)
+mkv = m.groupdict()
+for i in mkv:
+    for j in mkv:
+        if i == j:
+            continue
+        elif {i, j} == {'list1', 'circular'}:
+            test(mkv[i] == mkv[j], 'circular-list')
+        else:
+            test(mkv[i] != mkv[j], 'circular-list')
