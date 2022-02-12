@@ -39,6 +39,13 @@ ml_object *ml_object_new_name(ml_string str) {
   return ret;
 }
 
+ml_object *ml_object_new_builtin_function(ml_builtin *builtin) {
+  ml_object *ret = xgcmalloc(sizeof(ml_object));
+  ml_function func = {.tag = ML_FUNCTION_BUILTIN, .builtin = builtin};
+  *ret = (ml_object){.tag = ML_OBJECT_FUNCTION, .func = func};
+  return ret;
+}
+
 int ml_list_exists(ml_object *list, ml_object *ptr) {
   ml_object *o = list;
   while (o->tag == ML_OBJECT_CONS) {
@@ -86,6 +93,15 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
     ml_object_debug_dump_recur(obj->cons.car, known_objs, depth + 1);
     ml_object_debug_dump_recur(obj->cons.cdr, known_objs, depth + 1);
     break;
+  case ML_OBJECT_FUNCTION:
+    switch (obj->func.tag) {
+    case ML_FUNCTION_NORMAL:
+      /* TODO */
+      fatal("unimplemented");
+    case ML_FUNCTION_BUILTIN:
+      rlogmsg("BUILTIN FUNCTION: %" PRIxPTR, (uintptr_t)obj->func.builtin);
+      break;
+    }
   }
 }
 

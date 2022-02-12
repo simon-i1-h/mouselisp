@@ -101,6 +101,21 @@ typedef struct ml_cons {
   ml_object *cdr;
 } ml_cons;
 
+typedef enum ml_function_tag {
+  ML_FUNCTION_NORMAL,
+  ML_FUNCTION_BUILTIN
+} ml_function_tag;
+
+typedef ml_object *(ml_builtin)(ml_object *);
+
+typedef struct ml_function {
+  ml_function_tag tag;
+  union {
+    ml_object *root;
+    ml_builtin *builtin;
+  };
+} ml_function;
+
 /*
  * TODO: byte (array)
  */
@@ -110,7 +125,8 @@ typedef enum ml_object_tag {
   ML_OBJECT_BOOL,
   ML_OBJECT_NUMBER,
   ML_OBJECT_STRING,
-  ML_OBJECT_NAME
+  ML_OBJECT_NAME,
+  ML_OBJECT_FUNCTION
 } ml_object_tag;
 
 typedef struct ml_object {
@@ -120,6 +136,7 @@ typedef struct ml_object {
     int boolean;
     double num;
     ml_string str; /* string or name */
+    ml_function func;
   };
 } ml_object;
 
@@ -129,6 +146,7 @@ ml_object *ml_object_new_bool(int boolean);
 ml_object *ml_object_new_number(double num);
 ml_object *ml_object_new_string(ml_string str);
 ml_object *ml_object_new_name(ml_string str);
+ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
 int ml_list_exists(ml_object *list, ml_object *ptr);
 void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
                                 int depth);
@@ -150,10 +168,15 @@ ml_object *ml_parser_parse(ml_parser *p);
 /* machine.c */
 
 typedef struct ml_machine {
-  int fake;
+  ml_object *named_objs;
 } ml_machine;
 
+ml_machine ml_machine_new(void);
 ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
+
+/* builtin.c */
+
+ml_object *ml_add(ml_object *args);
 
 /* init.c */
 

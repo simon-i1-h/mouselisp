@@ -100,7 +100,7 @@ void test_object(void) {
 void test_machine(void) {
   /* simple add() */
   {
-    ml_machine machine = (ml_machine){0};
+    ml_machine machine = ml_machine_new();
     ml_object *f = ml_object_new_name(ml_string_new_str("+"));
     ml_object *a = ml_object_new_number(32);
     ml_object *b = ml_object_new_number(-0.5);
@@ -115,7 +115,7 @@ void test_machine(void) {
 
 void test_top(void) {
   {
-    ml_machine machine = (ml_machine){0};
+    ml_machine machine = ml_machine_new();
     ml_parser parser = (ml_parser){.file = (ml_file){.str = "(+ 3 5)"}};
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
@@ -127,7 +127,7 @@ void test_top(void) {
 
   /* nested */
   {
-    ml_machine machine = (ml_machine){0};
+    ml_machine machine = ml_machine_new();
     ml_parser parser = (ml_parser){.file = (ml_file){.str = "(+ 1 (+ 2 3))"}};
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
