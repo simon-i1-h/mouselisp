@@ -1,3 +1,4 @@
+import itertools
 import os
 import re
 import subprocess
@@ -121,11 +122,8 @@ m = test_match(
     'circular-list'
 )
 mkv = m.groupdict()
-for i in mkv:
-    for j in mkv:
-        if i == j:
-            continue
-        elif {i, j} == {'list1', 'circular'}:
-            test(mkv[i] == mkv[j], 'circular-list')
-        else:
-            test(mkv[i] != mkv[j], 'circular-list')
+for t in itertools.combinations(mkv, 2):
+    if set(t) == {'list1', 'circular'}:
+        test(mkv[t[0]] == mkv[t[1]], 'circular-list')
+    else:
+        test(mkv[t[0]] != mkv[t[1]], 'circular-list')
