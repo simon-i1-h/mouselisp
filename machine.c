@@ -55,7 +55,7 @@ ml_machine ml_machine_new(void) {
   return (ml_machine){.named_objs = ml_prelude()};
 }
 
-ml_object *ml_define(ml_machine *m, ml_object *body) {
+ml_object *ml_def(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -130,7 +130,7 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   if (strcmp(name.str, "if") == 0)
     return ml_if(m, cdr);
   else if (strcmp(name.str, "def") == 0)
-    return ml_define(m, cdr);
+    return ml_def(m, cdr);
 
   ml_object *value = ml_find_named_object(m, name.str);
 

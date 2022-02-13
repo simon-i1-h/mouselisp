@@ -306,7 +306,7 @@ void test_special_forms(void) {
     ml_test(result->num == 40);
   }
 
-  /* define */
+  /* def */
   {
     ml_machine machine = ml_machine_new();
     const char *code = "(def g1 25) g1";
