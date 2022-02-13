@@ -48,7 +48,7 @@ test_match(
     r'\A'
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
     r'--------------------\n'
-    r'[0-9a-f]+ NUMBER: 42\.0+\n'
+    r'[0-9a-f]+ NUMBER: 42\n'
     r'--------------------\n'
     r'\Z',
     'number'
@@ -82,7 +82,7 @@ test_match(
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
     r'--------------------\n'
     r'[0-9a-f]+ CONS:\n'
-    r'  [0-9a-f]+ NUMBER: -42\.0+\n'
+    r'  [0-9a-f]+ NUMBER: -42\n'
     r'  [0-9a-f]+ BOOL: false\n'
     r'--------------------\n'
     r'\Z',

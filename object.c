@@ -21,7 +21,7 @@ ml_object *ml_object_new_bool(int boolean) {
   return ret;
 }
 
-ml_object *ml_object_new_number(double num) {
+ml_object *ml_object_new_number(int num) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
   *ret = (ml_object){.tag = ML_OBJECT_NUMBER, .num = num};
   return ret;
@@ -82,7 +82,7 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
     rlogmsg("BOOL: %s", obj->boolean ? "true" : "false");
     break;
   case ML_OBJECT_NUMBER:
-    rlogmsg("NUMBER: %f", obj->num);
+    rlogmsg("NUMBER: %d", obj->num);
     break;
   case ML_OBJECT_STRING:
     rlogmsg("STRING: %s", obj->str.str);

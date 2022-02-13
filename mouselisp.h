@@ -134,7 +134,7 @@ typedef struct ml_object {
   union {
     ml_cons cons;
     int boolean;
-    double num;
+    int num; /* TODO double? */
     ml_string str; /* string or name */
     ml_function func;
   };
@@ -143,7 +143,7 @@ typedef struct ml_object {
 ml_object *ml_object_new_nil(void);
 ml_object *ml_object_new_cons(ml_object *car, ml_object *cdr);
 ml_object *ml_object_new_bool(int boolean);
-ml_object *ml_object_new_number(double num);
+ml_object *ml_object_new_number(int num);
 ml_object *ml_object_new_string(const char *str);
 ml_object *ml_object_new_name(const char *str);
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin);

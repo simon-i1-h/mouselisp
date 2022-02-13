@@ -26,19 +26,19 @@ void test_object(void) {
 
   /* number */
   {
-    ml_object *num = ml_object_new_number(0.0);
+    ml_object *num = ml_object_new_number(0);
     ml_test(num->tag == ML_OBJECT_NUMBER);
-    ml_test(num->num == 0.0);
+    ml_test(num->num == 0);
   }
   {
-    ml_object *num = ml_object_new_number(42.0);
+    ml_object *num = ml_object_new_number(42);
     ml_test(num->tag == ML_OBJECT_NUMBER);
-    ml_test(num->num == 42.0);
+    ml_test(num->num == 42);
   }
   {
-    ml_object *num = ml_object_new_number(-42.0);
+    ml_object *num = ml_object_new_number(-42);
     ml_test(num->tag == ML_OBJECT_NUMBER);
-    ml_test(num->num == -42.0);
+    ml_test(num->num == -42);
   }
 
   /* bool */
@@ -69,14 +69,14 @@ void test_object(void) {
 
   /* cons */
   {
-    ml_object *car = ml_object_new_number(42.0);
+    ml_object *car = ml_object_new_number(42);
     ml_object *cdr = ml_object_new_bool(0);
     ml_object *cons = ml_object_new_cons(car, cdr);
     uintptr_t ptrs[3] = {(uintptr_t)cons->cons.car,
                          (uintptr_t)cons->cons.cdr, (uintptr_t)cons};
     ml_test(cons->tag == ML_OBJECT_CONS);
     ml_test(cons->cons.car->tag == ML_OBJECT_NUMBER);
-    ml_test(cons->cons.car->num == 42.0);
+    ml_test(cons->cons.car->num == 42);
     ml_test(cons->cons.cdr->tag == ML_OBJECT_BOOL);
     ml_test(cons->cons.cdr->boolean == 0);
     ml_test(ptrarr_in((uintptr_t)car, ptrs, countof(ptrs), 1));
@@ -103,13 +103,13 @@ void test_machine(void) {
     ml_machine machine = ml_machine_new();
     ml_object *f = ml_object_new_name("+");
     ml_object *a = ml_object_new_number(32);
-    ml_object *b = ml_object_new_number(-0.5);
+    ml_object *b = ml_object_new_number(-2);
     ml_object *list3 = ml_object_new_cons(b, the_nil);
     ml_object *list2 = ml_object_new_cons(a, list3);
     ml_object *list1 = ml_object_new_cons(f, list2);
     ml_object *result = ml_machine_eval(&machine, list1);
     ml_test(result->tag == ML_OBJECT_NUMBER);
-    ml_test(result->num == 31.5);
+    ml_test(result->num == 30);
   }
 }
 
@@ -181,7 +181,7 @@ void test_top(void) {
       fatal("parse");
     ml_object *result = ml_machine_eval(&machine, root->cons.car);
     ml_test(result->tag == ML_OBJECT_NUMBER);
-    ml_test(result->num == 8.0);
+    ml_test(result->num == 8);
   }
 
   /* nested */
@@ -193,7 +193,7 @@ void test_top(void) {
       fatal("parse");
     ml_object *result = ml_machine_eval(&machine, root->cons.car);
     ml_test(result->tag == ML_OBJECT_NUMBER);
-    ml_test(result->num == 6.0);
+    ml_test(result->num == 6);
   }
 }
 
@@ -211,7 +211,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *invalid_nil = ml_object_new_nil();
     ml_object_debug_dump(invalid_nil);
   } else if (strcmp(testname, "number") == 0) {
-    ml_object *num = ml_object_new_number(42.0);
+    ml_object *num = ml_object_new_number(42);
     ml_object_debug_dump(num);
   } else if (strcmp(testname, "bool") == 0) {
     ml_object *b = ml_object_new_bool(1);
@@ -220,7 +220,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *str = ml_object_new_string("dog");
     ml_object_debug_dump(str);
   } else if (strcmp(testname, "cons") == 0) {
-    ml_object *car = ml_object_new_number(-42.0);
+    ml_object *car = ml_object_new_number(-42);
     ml_object *cdr = ml_object_new_bool(0);
     ml_object *cons = ml_object_new_cons(car, cdr);
     ml_object_debug_dump(cons);
