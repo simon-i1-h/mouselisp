@@ -6,7 +6,7 @@ ml_object *ml_prelude(void) {
   ml_object *ret = the_nil;
 
   {
-    ml_object *name = ml_object_new_name(ml_string_new_str("+"));
+    ml_object *name = ml_object_new_name("+");
     ml_object *value = ml_object_new_builtin_function(ml_add);
     ml_object *named = ml_object_new_cons(name, value);
     ret = ml_object_new_cons(named, ret);

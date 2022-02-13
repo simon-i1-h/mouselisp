@@ -27,15 +27,17 @@ ml_object *ml_object_new_number(double num) {
   return ret;
 }
 
-ml_object *ml_object_new_string(ml_string str) {
+ml_object *ml_object_new_string(const char *str) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
-  *ret = (ml_object){.tag = ML_OBJECT_STRING, .str = str};
+  ml_string mlstr = ml_string_new_str(str);
+  *ret = (ml_object){.tag = ML_OBJECT_STRING, .str = mlstr};
   return ret;
 }
 
-ml_object *ml_object_new_name(ml_string str) {
+ml_object *ml_object_new_name(const char *str) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
-  *ret = (ml_object){.tag = ML_OBJECT_NAME, .str = str};
+  ml_string mlstr = ml_string_new_str(str);
+  *ret = (ml_object){.tag = ML_OBJECT_NAME, .str = mlstr};
   return ret;
 }
 

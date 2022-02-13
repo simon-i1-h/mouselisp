@@ -55,13 +55,13 @@ void test_object(void) {
 
   /* string */
   {
-    ml_object *str = ml_object_new_string(ml_string_new_str(""));
+    ml_object *str = ml_object_new_string("");
     ml_test(str->tag == ML_OBJECT_STRING);
     ml_string expected = ml_string_new_str("");
     ml_test(ml_string_strcmp(&str->str, &expected) == 0);
   }
   {
-    ml_object *str = ml_object_new_string(ml_string_new_str("fox"));
+    ml_object *str = ml_object_new_string("fox");
     ml_test(str->tag == ML_OBJECT_STRING);
     ml_string expected = ml_string_new_str("fox");
     ml_test(ml_string_strcmp(&str->str, &expected) == 0);
@@ -101,7 +101,7 @@ void test_machine(void) {
   /* simple add() */
   {
     ml_machine machine = ml_machine_new();
-    ml_object *f = ml_object_new_name(ml_string_new_str("+"));
+    ml_object *f = ml_object_new_name("+");
     ml_object *a = ml_object_new_number(32);
     ml_object *b = ml_object_new_number(-0.5);
     ml_object *list3 = ml_object_new_cons(b, the_nil);
@@ -157,7 +157,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *b = ml_object_new_bool(1);
     ml_object_debug_dump(b);
   } else if (strcmp(testname, "string") == 0) {
-    ml_object *str = ml_object_new_string(ml_string_new_str("dog"));
+    ml_object *str = ml_object_new_string("dog");
     ml_object_debug_dump(str);
   } else if (strcmp(testname, "cons") == 0) {
     ml_object *car = ml_object_new_number(-42.0);
@@ -170,11 +170,11 @@ void test_object_dump_main(const char *testname) {
     ml_object_debug_dump(cons);
   } else if (strcmp(testname, "circular-list") == 0) {
     ml_object *list3 = ml_object_new_cons(
-        ml_object_new_string(ml_string_new_str("3rd")), the_nil);
+        ml_object_new_string("3rd"), the_nil);
     ml_object *list2 = ml_object_new_cons(
-        ml_object_new_string(ml_string_new_str("2nd")), list3);
+        ml_object_new_string("2nd"), list3);
     ml_object *list1 = ml_object_new_cons(
-        ml_object_new_string(ml_string_new_str("1st")), list2);
+        ml_object_new_string("1st"), list2);
     list3->cons.cdr = list1;
     ml_object_debug_dump(list1);
   } else {

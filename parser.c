@@ -194,7 +194,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
           ml_file_unread(&p->file, c.c);
         if (is_sign(first)) {
           ml_string_concat_char(&strbuf, first);
-          return ml_object_new_name(strbuf);
+          return ml_object_new_name(strbuf.str);
         } else {
           ml_file_unread(&p->file, first);
           return ml_parser_parse_literal_number(p);
@@ -221,7 +221,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
       if (c.eof || is_end_value(c.c)) {
         if (!c.eof)
           ml_file_unread(&p->file, c.c);
-        return ml_object_new_name(strbuf);
+        return ml_object_new_name(strbuf.str);
       }
 
       if (is_name_rest(c.c)) {

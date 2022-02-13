@@ -144,8 +144,8 @@ ml_object *ml_object_new_nil(void);
 ml_object *ml_object_new_cons(ml_object *car, ml_object *cdr);
 ml_object *ml_object_new_bool(int boolean);
 ml_object *ml_object_new_number(double num);
-ml_object *ml_object_new_string(ml_string str);
-ml_object *ml_object_new_name(ml_string str);
+ml_object *ml_object_new_string(const char *str);
+ml_object *ml_object_new_name(const char *str);
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
 int ml_list_exists(ml_object *list, ml_object *ptr);
 void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
