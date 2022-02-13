@@ -163,6 +163,7 @@ typedef struct ml_parser {
   ml_file file;
 } ml_parser;
 
+ml_parser ml_parser_new_str(const char *str);
 ml_object *ml_parser_parse(ml_parser *p);
 
 /* machine.c */

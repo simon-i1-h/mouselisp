@@ -116,7 +116,7 @@ void test_machine(void) {
 void test_top(void) {
   {
     ml_machine machine = ml_machine_new();
-    ml_parser parser = (ml_parser){.file = (ml_file){.str = "(+ 3 5)"}};
+    ml_parser parser = ml_parser_new_str("(+ 3 5)");
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
@@ -128,7 +128,7 @@ void test_top(void) {
   /* nested */
   {
     ml_machine machine = ml_machine_new();
-    ml_parser parser = (ml_parser){.file = (ml_file){.str = "(+ 1 (+ 2 3))"}};
+    ml_parser parser = ml_parser_new_str("(+ 1 (+ 2 3))");
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
