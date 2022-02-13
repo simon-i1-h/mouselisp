@@ -13,6 +13,7 @@
 
 #define ATTR_FMT_PRINTF(fmt, args) __attribute__((format(printf, fmt, args)))
 #define ATTR_NORETURN __attribute__((noreturn))
+#define ATTR_FALLTHROUGH __attribute__((fallthrough))
 
 #define countof(a) (sizeof(a) / sizeof(a[0]))
 

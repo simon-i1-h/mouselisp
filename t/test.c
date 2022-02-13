@@ -96,6 +96,39 @@ void test_object(void) {
   }
 }
 
+/* parser.c */
+void test_parser(void) {
+  /* nil literal */
+  {
+    ml_parser parser = ml_parser_new_str("nil");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = root->cons.car;
+    ml_test(result == the_nil);
+  }
+
+  /* bool literal */
+  {
+    ml_parser parser = ml_parser_new_str("true");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = root->cons.car;
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_parser parser = ml_parser_new_str("false");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = root->cons.car;
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+}
+
 /* machine.c */
 void test_machine(void) {
   /* simple add() */
@@ -230,6 +263,7 @@ void test_builtin(void) {
 
 void test_main(void) {
   test_object();
+  test_parser();
   test_machine();
   test_top();
   test_builtin();

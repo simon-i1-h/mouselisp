@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "mouselisp.h"
 
 inline static int is_whitespace(unsigned char c) {
@@ -159,7 +161,7 @@ invalid:
 
 /* TODO: NULLを使わず例外を使うかも */
 ml_object *ml_parser_parse_expr(ml_parser *p) {
-  enum { STATE_START, STATE_LITERAL_NUMBER, STATE_NAME } st = STATE_START;
+  enum { STATE_START, STATE_LITERAL_NUMBER, STATE_NAME, STATE_NAME_END } st = STATE_START;
 
   ml_read_char c;
   char first;
@@ -198,7 +200,8 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
           ml_file_unread(&p->file, c.c);
         if (is_sign(first)) {
           ml_string_concat_char(&strbuf, first);
-          return ml_object_new_name(strbuf.str);
+          st = STATE_NAME_END;
+          break;
         } else {
           ml_file_unread(&p->file, first);
           return ml_parser_parse_literal_number(p);
@@ -225,7 +228,8 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
       if (c.eof || is_end_value(c.c)) {
         if (!c.eof)
           ml_file_unread(&p->file, c.c);
-        return ml_object_new_name(strbuf.str);
+        st = STATE_NAME_END;
+        break;
       }
 
       if (is_name_rest(c.c)) {
@@ -234,6 +238,15 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
       }
 
       goto invalid;
+    case STATE_NAME_END:
+      if (strcmp(strbuf.str, "nil") == 0)
+        return the_nil;
+      else if (strcmp(strbuf.str, "true") == 0)
+        return ml_object_new_bool(1);
+      else if (strcmp(strbuf.str, "false") == 0)
+        return ml_object_new_bool(0);
+      else
+        return ml_object_new_name(strbuf.str);
     }
   }
 

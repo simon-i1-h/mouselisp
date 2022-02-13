@@ -100,11 +100,22 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
 }
 
 ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
-  if (root->tag == ML_OBJECT_NUMBER)
+  switch (root->tag) {
+  case ML_OBJECT_NIL:
+    if (root != the_nil)
+      break;
+    ATTR_FALLTHROUGH;
+  case ML_OBJECT_NUMBER:
+  case ML_OBJECT_BOOL:
     return root;
-
-  if (root->tag == ML_OBJECT_CONS)
+  case ML_OBJECT_STRING:
+  case ML_OBJECT_FUNCTION:
+  case ML_OBJECT_NAME:
+    /* TODO */
+    break;
+  case ML_OBJECT_CONS:
     return ml_machine_eval_list(m, root);
+  }
 
   ml_object_debug_dump(root);
   fatal("evaluate failed."); /* TODO */
