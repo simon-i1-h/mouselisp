@@ -187,6 +187,45 @@ void test_builtin(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
+
+  /* cons */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(cons 0 1)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_NUMBER);
+    ml_test(result->cons.car->num == 0);
+    ml_test(result->cons.cdr->tag == ML_OBJECT_NUMBER);
+    ml_test(result->cons.cdr->num == 1);
+  }
+
+  /* car */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(car (cons 0 1))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 0);
+  }
+
+  /* cdr */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(cdr (cons 0 1))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 1);
+  }
 }
 
 void test_main(void) {

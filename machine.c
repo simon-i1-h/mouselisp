@@ -29,6 +29,24 @@ ml_object *ml_prelude(void) {
     ml_object *named = ml_object_new_cons(name, value);
     ret = ml_object_new_cons(named, ret);
   }
+  {
+    ml_object *name = ml_object_new_name("car");
+    ml_object *value = ml_object_new_builtin_function(ml_car);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret = ml_object_new_cons(named, ret);
+  }
+  {
+    ml_object *name = ml_object_new_name("cdr");
+    ml_object *value = ml_object_new_builtin_function(ml_cdr);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret = ml_object_new_cons(named, ret);
+  }
+  {
+    ml_object *name = ml_object_new_name("cons");
+    ml_object *value = ml_object_new_builtin_function(ml_cons_);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret = ml_object_new_cons(named, ret);
+  }
 
   return ret;
 }

@@ -181,6 +181,9 @@ ml_object *ml_add(ml_object *args);
 ml_object *ml_sub(ml_object *args);
 ml_object *ml_mul(ml_object *args);
 ml_object *ml_div(ml_object *args);
+ml_object *ml_car(ml_object *args);
+ml_object *ml_cdr(ml_object *args);
+ml_object *ml_cons_(ml_object *args); /* TODO naming */
 
 /* init.c */
 
