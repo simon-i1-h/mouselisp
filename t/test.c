@@ -113,6 +113,65 @@ void test_machine(void) {
   }
 }
 
+/* builtin.c */
+void test_builtin(void) {
+  /* simple add() */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_object *f = ml_object_new_name("+");
+    ml_object *a = ml_object_new_number(45);
+    ml_object *b = ml_object_new_number(15);
+    ml_object *list3 = ml_object_new_cons(b, the_nil);
+    ml_object *list2 = ml_object_new_cons(a, list3);
+    ml_object *list1 = ml_object_new_cons(f, list2);
+    ml_object *result = ml_machine_eval(&machine, list1);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 60);
+  }
+
+  /* simple sub() */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_object *f = ml_object_new_name("-");
+    ml_object *a = ml_object_new_number(45);
+    ml_object *b = ml_object_new_number(15);
+    ml_object *list3 = ml_object_new_cons(b, the_nil);
+    ml_object *list2 = ml_object_new_cons(a, list3);
+    ml_object *list1 = ml_object_new_cons(f, list2);
+    ml_object *result = ml_machine_eval(&machine, list1);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 30);
+  }
+
+  /* simple mul() */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_object *f = ml_object_new_name("*");
+    ml_object *a = ml_object_new_number(45);
+    ml_object *b = ml_object_new_number(15);
+    ml_object *list3 = ml_object_new_cons(b, the_nil);
+    ml_object *list2 = ml_object_new_cons(a, list3);
+    ml_object *list1 = ml_object_new_cons(f, list2);
+    ml_object *result = ml_machine_eval(&machine, list1);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 675);
+  }
+
+  /* simple div() */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_object *f = ml_object_new_name("/");
+    ml_object *a = ml_object_new_number(45);
+    ml_object *b = ml_object_new_number(15);
+    ml_object *list3 = ml_object_new_cons(b, the_nil);
+    ml_object *list2 = ml_object_new_cons(a, list3);
+    ml_object *list1 = ml_object_new_cons(f, list2);
+    ml_object *result = ml_machine_eval(&machine, list1);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 3);
+  }
+}
+
 void test_top(void) {
   {
     ml_machine machine = ml_machine_new();
@@ -142,6 +201,7 @@ void test_main(void) {
   test_object();
   test_machine();
   test_top();
+  test_builtin();
 }
 
 void test_object_dump_main(const char *testname) {

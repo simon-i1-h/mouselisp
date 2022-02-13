@@ -178,6 +178,9 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
 /* builtin.c */
 
 ml_object *ml_add(ml_object *args);
+ml_object *ml_sub(ml_object *args);
+ml_object *ml_mul(ml_object *args);
+ml_object *ml_div(ml_object *args);
 
 /* init.c */
 

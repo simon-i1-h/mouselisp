@@ -11,6 +11,24 @@ ml_object *ml_prelude(void) {
     ml_object *named = ml_object_new_cons(name, value);
     ret = ml_object_new_cons(named, ret);
   }
+  {
+    ml_object *name = ml_object_new_name("-");
+    ml_object *value = ml_object_new_builtin_function(ml_sub);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret = ml_object_new_cons(named, ret);
+  }
+  {
+    ml_object *name = ml_object_new_name("*");
+    ml_object *value = ml_object_new_builtin_function(ml_mul);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret = ml_object_new_cons(named, ret);
+  }
+  {
+    ml_object *name = ml_object_new_name("/");
+    ml_object *value = ml_object_new_builtin_function(ml_div);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret = ml_object_new_cons(named, ret);
+  }
 
   return ret;
 }
