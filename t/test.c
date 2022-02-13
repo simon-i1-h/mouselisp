@@ -309,7 +309,7 @@ void test_special_forms(void) {
   /* define */
   {
     ml_machine machine = ml_machine_new();
-    const char *code = "(define g1 25) g1";
+    const char *code = "(def g1 25) g1";
     ml_parser parser = ml_parser_new_str(code);
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
@@ -322,7 +322,7 @@ void test_special_forms(void) {
   }
   {
     ml_machine machine = ml_machine_new();
-    const char *code = "(define g1 25) (+ g1 15)";
+    const char *code = "(def g1 25) (+ g1 15)";
     ml_parser parser = ml_parser_new_str(code);
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
@@ -335,7 +335,7 @@ void test_special_forms(void) {
   }
   {
     ml_machine machine = ml_machine_new();
-    const char *code = "(define g1 (car (cons 15 35))) g1";
+    const char *code = "(def g1 (car (cons 15 35))) g1";
     ml_parser parser = ml_parser_new_str(code);
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)

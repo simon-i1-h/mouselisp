@@ -129,7 +129,7 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   /* special forms */
   if (strcmp(name.str, "if") == 0)
     return ml_if(m, cdr);
-  else if (strcmp(name.str, "define") == 0)
+  else if (strcmp(name.str, "def") == 0)
     return ml_define(m, cdr);
 
   ml_object *value = ml_find_named_object(m, name.str);
