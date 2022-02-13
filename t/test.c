@@ -305,6 +305,47 @@ void test_special_forms(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 40);
   }
+
+  /* define */
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(define g1 25) g1";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 25);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(define g1 25) (+ g1 15)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 40);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(define g1 (car (cons 15 35))) g1";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 15);
+  }
 }
 
 void test_main(void) {
