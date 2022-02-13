@@ -55,6 +55,33 @@ ml_machine ml_machine_new(void) {
   return (ml_machine){.named_objs = ml_prelude()};
 }
 
+ml_object *ml_if(ml_machine *m, ml_object *body) {
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *cond = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *then = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *else_ = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  ml_object *evaled = ml_machine_eval(m, cond);
+  if (evaled->tag != ML_OBJECT_BOOL)
+    fatal("invalid body");
+  return ml_machine_eval(m, evaled->boolean ? then : else_);
+}
+
 ml_object *ml_find_named_object(ml_machine *m, const char *name) {
   for (ml_object *elem = m->named_objs; elem != the_nil;
        elem = elem->cons.cdr) {
@@ -70,13 +97,18 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *cdr = root->cons.cdr;
 
   if (car->tag != ML_OBJECT_NAME)
-    fatal("invalid args");
+    fatal("invalid form");
 
   ml_string name = car->str;
+
+  /* special forms */
+  if (strcmp(name.str, "if") == 0)
+    return ml_if(m, cdr);
+
   ml_object *value = ml_find_named_object(m, name.str);
 
   if (value->tag != ML_OBJECT_FUNCTION)
-    fatal("invalid args");
+    fatal("invalid form");
   ml_function func = value->func;
 
   ml_object *args = the_nil;

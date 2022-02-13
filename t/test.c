@@ -261,12 +261,59 @@ void test_builtin(void) {
   }
 }
 
+void test_special_forms(void) {
+  /* if */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(if true 20 50)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 20);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(if false 20 50)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 50);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(if (car (cons true false)) (car (cons 10 20)) (cdr (cons 30 40)))";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 10);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(if (cdr (cons true false)) (car (cons 10 20)) (cdr (cons 30 40)))";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 40);
+  }
+}
+
 void test_main(void) {
   test_object();
   test_parser();
   test_machine();
   test_top();
   test_builtin();
+  test_special_forms();
 }
 
 void test_object_dump_main(const char *testname) {
