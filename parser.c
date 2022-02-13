@@ -33,7 +33,6 @@ ml_parser ml_parser_new_str(const char *str) {
   return (ml_parser){.file = (ml_file){.str = str}};
 }
 
-/* TODO: 小数も扱えるようにしたい。 */
 ml_object *ml_parser_parse_literal_number(ml_parser *p) {
   enum { STATE_START, STATE_ZERO, STATE_INTERGER } st = STATE_START;
   ml_read_char c;
