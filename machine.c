@@ -151,7 +151,7 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
 
   switch (func.tag) {
   case ML_FUNCTION_BUILTIN:
-    return func.builtin(args);
+    return func.builtin(m, args);
   case ML_FUNCTION_NORMAL:
     /* TODO */
     fatal("unimplemented");

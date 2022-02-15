@@ -1,6 +1,7 @@
 #include "mouselisp.h"
 
-ml_object *ml_add(ml_object *args) {
+ml_object *ml_add(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -25,7 +26,8 @@ ml_object *ml_add(ml_object *args) {
   return ml_object_new_number(a->num + b->num);
 }
 
-ml_object *ml_sub(ml_object *args) {
+ml_object *ml_sub(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -50,7 +52,8 @@ ml_object *ml_sub(ml_object *args) {
   return ml_object_new_number(a->num - b->num);
 }
 
-ml_object *ml_mul(ml_object *args) {
+ml_object *ml_mul(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -75,7 +78,8 @@ ml_object *ml_mul(ml_object *args) {
   return ml_object_new_number(a->num * b->num);
 }
 
-ml_object *ml_div(ml_object *args) {
+ml_object *ml_div(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -100,7 +104,8 @@ ml_object *ml_div(ml_object *args) {
   return ml_object_new_number(a->num / b->num);
 }
 
-ml_object *ml_car(ml_object *args) {
+ml_object *ml_car(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -117,7 +122,8 @@ ml_object *ml_car(ml_object *args) {
   return list->cons.car;
 }
 
-ml_object *ml_cdr(ml_object *args) {
+ml_object *ml_cdr(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)
@@ -135,7 +141,8 @@ ml_object *ml_cdr(ml_object *args) {
 }
 
 /* TODO naming */
-ml_object *ml_cons_(ml_object *args) {
+ml_object *ml_cons_(ml_machine *m, ml_object *args) {
+  (void)m;
   ml_object *curr = args;
 
   if (curr->tag != ML_OBJECT_CONS)

@@ -107,7 +107,9 @@ typedef enum ml_function_tag {
   ML_FUNCTION_BUILTIN
 } ml_function_tag;
 
-typedef ml_object *(ml_builtin)(ml_object *);
+typedef struct ml_machine ml_machine;
+
+typedef ml_object *(ml_builtin)(ml_machine *, ml_object *);
 
 typedef struct ml_function {
   ml_function_tag tag;
@@ -178,13 +180,13 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
 
 /* builtin.c */
 
-ml_object *ml_add(ml_object *args);
-ml_object *ml_sub(ml_object *args);
-ml_object *ml_mul(ml_object *args);
-ml_object *ml_div(ml_object *args);
-ml_object *ml_car(ml_object *args);
-ml_object *ml_cdr(ml_object *args);
-ml_object *ml_cons_(ml_object *args); /* TODO naming */
+ml_object *ml_add(ml_machine *m, ml_object *args);
+ml_object *ml_sub(ml_machine *m, ml_object *args);
+ml_object *ml_mul(ml_machine *m, ml_object *args);
+ml_object *ml_div(ml_machine *m, ml_object *args);
+ml_object *ml_car(ml_machine *m, ml_object *args);
+ml_object *ml_cdr(ml_machine *m, ml_object *args);
+ml_object *ml_cons_(ml_machine *m, ml_object *args); /* TODO naming */
 
 /* init.c */
 
