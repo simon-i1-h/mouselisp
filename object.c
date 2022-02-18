@@ -43,7 +43,19 @@ ml_object *ml_object_new_name(const char *str) {
 
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
-  ml_function func = {.tag = ML_FUNCTION_BUILTIN, .builtin = builtin};
+  ml_function func = {.tag = ML_FUNCTION_BUILTIN,
+                      .builtin = builtin,
+                      .closure = NULL /* TODO NULLじゃない？ */};
+  *ret = (ml_object){.tag = ML_OBJECT_FUNCTION, .func = func};
+  return ret;
+}
+
+ml_object *ml_object_new_normal_function(ml_object *closure,
+                                         ml_object *args, ml_object *body) {
+  ml_object *ret = xgcmalloc(sizeof(ml_object));
+  ml_function func = {.tag = ML_FUNCTION_NORMAL,
+                      .normal = {.args = args, .body = body},
+                      .closure = closure};
   *ret = (ml_object){.tag = ML_OBJECT_FUNCTION, .func = func};
   return ret;
 }

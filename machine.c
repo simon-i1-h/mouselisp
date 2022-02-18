@@ -117,22 +117,49 @@ ml_object *ml_find_named_object(ml_machine *m, const char *name) {
   return NULL;
 }
 
+ml_object *ml_fn(ml_machine *m, ml_object *body) {
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *fn_args = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *fn_body = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  /* validate arg list */
+  for (ml_object *l = fn_args; l != the_nil; l = l->cons.cdr)
+    if (l->tag != ML_OBJECT_CONS || l->cons.car->tag != ML_OBJECT_NAME)
+      fatal("invalid body");
+
+  return ml_object_new_normal_function(m->named_objs, fn_args, fn_body);
+}
+
 ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *car = root->cons.car;
   ml_object *cdr = root->cons.cdr;
 
-  if (car->tag != ML_OBJECT_NAME)
-    fatal("invalid form");
+  if (car->tag == ML_OBJECT_NAME) {
+    ml_string name = car->str;
 
-  ml_string name = car->str;
+    /* special forms */
+    if (strcmp(name.str, "if") == 0)
+      return ml_if(m, cdr);
+    else if (strcmp(name.str, "def") == 0)
+      return ml_def(m, cdr);
+    else if (strcmp(name.str, "fn") == 0)
+      return ml_fn(m, cdr);
+  }
 
-  /* special forms */
-  if (strcmp(name.str, "if") == 0)
-    return ml_if(m, cdr);
-  else if (strcmp(name.str, "def") == 0)
-    return ml_def(m, cdr);
+  ml_object *value = ml_machine_eval(m, car);
 
-  ml_object *value = ml_find_named_object(m, name.str);
+  /* apply a function */
 
   if (value->tag != ML_OBJECT_FUNCTION)
     fatal("invalid form");
@@ -152,9 +179,26 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   switch (func.tag) {
   case ML_FUNCTION_BUILTIN:
     return func.builtin(m, args);
-  case ML_FUNCTION_NORMAL:
-    /* TODO */
-    fatal("unimplemented");
+  case ML_FUNCTION_NORMAL: {
+    /* bind */
+    ml_object *new_table = func.closure;
+    ml_object *name = func.normal.args;
+    ml_object *arg = args;
+    for (; name != the_nil && arg != the_nil;
+         name = name->cons.cdr, arg = arg->cons.cdr) {
+      if (name == the_nil || arg == the_nil)
+        fatal("mismatched number of args");
+      ml_object *named = ml_object_new_cons(name->cons.car, arg->cons.car);
+      new_table = ml_object_new_cons(named, new_table);
+    }
+
+    /* apply */
+    ml_object *curr_table = m->named_objs;
+    m->named_objs = new_table;
+    ml_object *ret = ml_machine_eval_list(m, func.normal.body);
+    m->named_objs = curr_table;
+    return ret;
+  }
   }
 }
 
@@ -179,7 +223,4 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
   case ML_OBJECT_CONS:
     return ml_machine_eval_list(m, root);
   }
-
-  ml_object_debug_dump(root);
-  fatal("evaluate failed."); /* TODO remove? */
 }

@@ -114,9 +114,13 @@ typedef ml_object *(ml_builtin)(ml_machine *, ml_object *);
 typedef struct ml_function {
   ml_function_tag tag;
   union {
-    ml_object *root;
+    struct {
+      ml_object *args;
+      ml_object *body;
+    } normal;
     ml_builtin *builtin;
   };
+  ml_object *closure;
 } ml_function;
 
 /*
@@ -137,7 +141,7 @@ typedef struct ml_object {
   union {
     ml_cons cons;
     int boolean;
-    int num; /* TODO double? */
+    int num;       /* TODO double? */
     ml_string str; /* string or name */
     ml_function func;
   };
@@ -150,6 +154,8 @@ ml_object *ml_object_new_number(int num);
 ml_object *ml_object_new_string(const char *str);
 ml_object *ml_object_new_name(const char *str);
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
+ml_object *ml_object_new_normal_function(ml_object *closure,
+                                         ml_object *args, ml_object *body);
 int ml_list_exists(ml_object *list, ml_object *ptr);
 void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
                                 int depth);

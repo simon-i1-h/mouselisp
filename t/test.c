@@ -346,6 +346,48 @@ void test_special_forms(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 15);
   }
+
+  /* fn */
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "((fn (x) (+ x 1)) 9)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 10);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(def f1 (fn (x) (+ x 1))) (f1 9)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 10);
+  }
+  {
+    /* simple closure */
+    ml_machine machine = ml_machine_new();
+    const char *code = "(def f1 (fn (x) (fn (y) (+ x y)))) ((f1 9) 1)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 10);
+  }
 }
 
 void test_main(void) {
