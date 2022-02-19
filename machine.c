@@ -3,49 +3,49 @@
 #include "mouselisp.h"
 
 ml_object *ml_prelude(void) {
-  ml_object *ret = the_nil;
+  ml_object *ret = ml_object_new_cons(the_nil, the_nil);
 
   {
     ml_object *name = ml_object_new_name("+");
     ml_object *value = ml_object_new_builtin_function(ml_add);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("-");
     ml_object *value = ml_object_new_builtin_function(ml_sub);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("*");
     ml_object *value = ml_object_new_builtin_function(ml_mul);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("/");
     ml_object *value = ml_object_new_builtin_function(ml_div);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("car");
     ml_object *value = ml_object_new_builtin_function(ml_car);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("cdr");
     ml_object *value = ml_object_new_builtin_function(ml_cdr);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("cons");
     ml_object *value = ml_object_new_builtin_function(ml_cons_);
     ml_object *named = ml_object_new_cons(name, value);
-    ret = ml_object_new_cons(named, ret);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
 
   return ret;
@@ -76,7 +76,7 @@ ml_object *ml_def(ml_machine *m, ml_object *body) {
 
   ml_object *evaled = ml_machine_eval(m, value);
   ml_object *named = ml_object_new_cons(name, evaled);
-  m->named_objs = ml_object_new_cons(named, m->named_objs);
+  m->named_objs->cons.cdr = ml_object_new_cons(named, m->named_objs->cons.cdr);
   return name;
 }
 
@@ -111,6 +111,8 @@ ml_object *ml_find_named_object(ml_machine *m, const char *name) {
   for (ml_object *elem = m->named_objs; elem != the_nil;
        elem = elem->cons.cdr) {
     ml_object *pair = elem->cons.car;
+    if (pair == the_nil)
+      continue;
     if (strcmp(pair->cons.car->str.str, name) == 0)
       return pair->cons.cdr;
   }
@@ -191,6 +193,7 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
       ml_object *named = ml_object_new_cons(name->cons.car, arg->cons.car);
       new_table = ml_object_new_cons(named, new_table);
     }
+    new_table = ml_object_new_cons(the_nil, new_table);
 
     /* apply */
     ml_object *curr_table = m->named_objs;
