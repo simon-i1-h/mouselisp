@@ -1,3 +1,4 @@
+import inspect
 import itertools
 import os
 import re
@@ -12,14 +13,18 @@ def test_match(pattern, testname):
     out = raw_out.decode('utf-8')
     match = re.match(pattern, out, re.MULTILINE)
     if match is None:
-        print(f'test failed: {testname}', file=sys.stderr)
+        fname = os.path.basename(__file__)
+        lineno = inspect.currentframe().f_back.f_lineno
+        print(f'{fname}: {lineno}: test failed: {testname}', file=sys.stderr)
         sys.exit(1)
     return match
 
 
-def test(b, testname):
+def test(b):
     if not b:
-        print(f'test failed: {testname}', file=sys.stderr)
+        fname = os.path.basename(__file__)
+        lineno = inspect.currentframe().f_back.f_lineno
+        print(f'{fname}: {lineno}: test failed.', file=sys.stderr)
         sys.exit(1)
 
 
@@ -129,9 +134,9 @@ m = test_match(
     r'\Z',
     'same-reference'
 )
-test(m['cons'] != m['same1'], 'same-reference')
-test(m['cons'] != m['same2'], 'same-reference')
-test(m['same1'] == m['same2'], 'same-reference')
+test(m['cons'] != m['same1'])
+test(m['cons'] != m['same2'])
+test(m['same1'] == m['same2'])
 
 # circular list
 m = test_match(
@@ -152,6 +157,6 @@ m = test_match(
 mkv = m.groupdict()
 for t in itertools.combinations(mkv, 2):
     if set(t) == {'list1', 'circular'}:
-        test(mkv[t[0]] == mkv[t[1]], 'circular-list')
+        test(mkv[t[0]] == mkv[t[1]])
     else:
-        test(mkv[t[0]] != mkv[t[1]], 'circular-list')
+        test(mkv[t[0]] != mkv[t[1]])
