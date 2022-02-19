@@ -189,6 +189,7 @@ ml_object *ml_add(ml_machine *m, ml_object *args);
 ml_object *ml_sub(ml_machine *m, ml_object *args);
 ml_object *ml_mul(ml_machine *m, ml_object *args);
 ml_object *ml_div(ml_machine *m, ml_object *args);
+ml_object *ml_mod(ml_machine *m, ml_object *args);
 ml_object *ml_car(ml_machine *m, ml_object *args);
 ml_object *ml_cdr(ml_machine *m, ml_object *args);
 ml_object *ml_cons_(ml_machine *m, ml_object *args); /* TODO naming */

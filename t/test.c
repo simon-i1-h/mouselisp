@@ -220,6 +220,28 @@ void test_builtin(void) {
     ml_test(result->num == 3);
   }
 
+  /* simple mod() */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(mod 45 15)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 0);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(mod 45 10)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 5);
+  }
+
   /* cons */
   {
     ml_machine machine = ml_machine_new();

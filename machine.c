@@ -30,6 +30,12 @@ ml_object *ml_prelude(void) {
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
+    ml_object *name = ml_object_new_name("mod");
+    ml_object *value = ml_object_new_builtin_function(ml_mod);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
     ml_object *name = ml_object_new_name("car");
     ml_object *value = ml_object_new_builtin_function(ml_car);
     ml_object *named = ml_object_new_cons(name, value);
