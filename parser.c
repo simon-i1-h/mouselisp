@@ -7,7 +7,7 @@ inline static int is_whitespace(unsigned char c) {
 }
 
 inline static int is_end_value(unsigned char c) {
-  return is_whitespace(c) || c == '(' || c == ')';
+  return is_whitespace(c) || c == '(' || c == ')' || c == ';';
 }
 
 inline static int is_sign(unsigned char c) {
@@ -129,6 +129,11 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
         goto invalid;
       if (is_whitespace(c.c))
         continue;
+      if (c.c == ';') {
+        while (!c.eof && c.c != '\n')
+          c = ml_file_read(&p->file);
+        continue;
+      }
 
       if (c.c == ')') {
         if (root != the_nil)
@@ -173,6 +178,11 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
         goto invalid;
       if (is_whitespace(c.c))
         break;
+      if (c.c == ';') {
+        while (!c.eof && c.c != '\n')
+          c = ml_file_read(&p->file);
+        break;
+      }
 
       if (c.c == '(') {
         ml_file_unread(&p->file, c.c);
@@ -261,6 +271,11 @@ ml_object *ml_parser_parse(ml_parser *p) {
       return root;
     if (is_whitespace(c.c))
       continue;
+    if (c.c == ';') {
+      while (!c.eof && c.c != '\n')
+        c = ml_file_read(&p->file);
+      continue;
+    }
 
     ml_file_unread(&p->file, c.c);
     expr = ml_parser_parse_expr(p);

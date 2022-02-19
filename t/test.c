@@ -126,6 +126,39 @@ void test_parser(void) {
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
+
+  /* comment */
+  {
+    ml_parser parser = ml_parser_new_str("; comment...\n" "(+ 1 2)\n");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+  }
+  {
+    /* EOF */
+    ml_parser parser = ml_parser_new_str("(+ 1 2)\n" "; comment...");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+  }
+  {
+    ml_parser parser = ml_parser_new_str("3; comment...\n");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+  }
+  {
+    ml_parser parser = ml_parser_new_str("(+ 1 3); comment...\n");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+  }
+  {
+    ml_parser parser = ml_parser_new_str("(+; add\n1; a\n3; b\n); end\n");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+  }
 }
 
 /* machine.c */
