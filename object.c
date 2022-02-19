@@ -117,13 +117,15 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
   case ML_OBJECT_FUNCTION:
     switch (obj->func.tag) {
     case ML_FUNCTION_NORMAL:
-      /* TODO */
-      fatal("unimplemented");
+      rlogmsg("NORMAL FUNCTION (ARGS, BODY):");
+      ml_object_debug_dump_recur(obj->func.normal.args, known_objs, depth + 1);
+      ml_object_debug_dump_recur(obj->func.normal.body, known_objs, depth + 1);
+      break;
     case ML_FUNCTION_BUILTIN:
       rlogmsg("BUILTIN FUNCTION: %" PRIxPTR, (uintptr_t)obj->func.builtin);
       break;
     }
-    fatal("unrechable");
+    break;
   case ML_OBJECT_POINTER:
     rlogmsg("POINTER: %" PRIxPTR, (uintptr_t)obj->ptr);
   }

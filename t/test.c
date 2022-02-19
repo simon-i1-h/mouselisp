@@ -542,6 +542,24 @@ void test_object_dump_main(const char *testname) {
     ml_object *cdr = ml_object_new_bool(0);
     ml_object *cons = ml_object_new_cons(car, cdr);
     ml_object_debug_dump(cons);
+  } else if (strcmp(testname, "builtin-function") == 0) {
+    ml_machine machine = ml_machine_new();
+    const char *code = "+";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object_debug_dump(result);
+  } else if (strcmp(testname, "normal-function") == 0) {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(fn (x) x)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object_debug_dump(result);
   } else if (strcmp(testname, "pointer") == 0) {
     ml_object *fake = ml_object_new_number(42);
     ml_object *str = ml_object_new_pointer(fake);

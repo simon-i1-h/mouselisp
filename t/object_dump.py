@@ -89,6 +89,32 @@ test_match(
     'cons'
 )
 
+# builtin function
+test_match(
+    r'\A'
+    r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
+    r'--------------------\n'
+    r'[0-9a-f]+ BUILTIN FUNCTION: [0-9a-f]+\n'
+    r'--------------------\n'
+    r'\Z',
+    'builtin-function'
+)
+
+# normal function
+test_match(
+    r'\A'
+    r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
+    r'--------------------\n'
+    r'[0-9a-f]+ NORMAL FUNCTION \(ARGS, BODY\):\n'
+    r'  [0-9a-f]+ CONS:\n'
+    r'    [0-9a-f]+ NAME: x\n'
+    r'    [0-9a-f]+ NIL\n'
+    r'  [0-9a-f]+ NAME: x\n'
+    r'--------------------\n'
+    r'\Z',
+    'normal-function'
+)
+
 # pointer
 test_match(
     r'\A'
