@@ -798,6 +798,36 @@ void test_special_forms(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
+
+  /* quote */
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(quote x)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->str.str, "x") == 0);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    const char *code = "(quote (x))";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->cons.car->str.str, "x") == 0);
+    ml_test(result->cons.cdr == the_nil);
+  }
 }
 
 void test_main(void) {

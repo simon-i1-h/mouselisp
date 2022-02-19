@@ -222,6 +222,21 @@ ml_object *ml_do(ml_machine *m, ml_object *body) {
   return ret;
 }
 
+ml_object *ml_quote(ml_machine *m, ml_object *body) {
+  (void)m;
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *list = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  return list;
+}
+
 ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *car = root->cons.car;
   ml_object *cdr = root->cons.cdr;
@@ -238,6 +253,8 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
       return ml_fn(m, cdr);
     else if (strcmp(name.str, "do") == 0)
       return ml_do(m, cdr);
+    else if (strcmp(name.str, "quote") == 0)
+      return ml_quote(m, cdr);
   }
 
   ml_object *value = ml_machine_eval(m, car);
