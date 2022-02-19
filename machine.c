@@ -236,10 +236,6 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
   ml_object *ret;
 
   switch (root->tag) {
-  case ML_OBJECT_NIL:
-    if (root != the_nil)
-      fatal("invalid nil");
-    ATTR_FALLTHROUGH;
   case ML_OBJECT_NUMBER:
   case ML_OBJECT_BOOL:
   case ML_OBJECT_FUNCTION:

@@ -191,6 +191,8 @@ ml_object *ml_deref(ml_machine *m, ml_object *args) {
   if (x->tag != ML_OBJECT_POINTER)
     fatal("invalid args");
 
-  /* TODO nilオブジェクトを参照型にした場合、ここで例外を出す必要がある。 */
+  if (x == the_nil)
+    fatal("nil");
+
   return x->ptr;
 }

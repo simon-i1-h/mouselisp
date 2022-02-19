@@ -126,7 +126,6 @@ typedef struct ml_function {
  * TODO: byte (array)
  */
 typedef enum ml_object_tag {
-  ML_OBJECT_NIL,
   ML_OBJECT_CONS,
   ML_OBJECT_BOOL,
   ML_OBJECT_NUMBER,

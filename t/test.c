@@ -22,7 +22,8 @@ int ptrarr_in(uintptr_t x, uintptr_t *array, size_t len, int nxs) {
 /* object.c */
 void test_object(void) {
   /* nil */
-  ml_test(the_nil->tag == ML_OBJECT_NIL);
+  ml_test(the_nil->tag == ML_OBJECT_POINTER);
+  ml_test(the_nil->ptr == NULL);
 
   /* number */
   {
@@ -521,11 +522,8 @@ void test_main(void) {
 }
 
 void test_object_dump_main(const char *testname) {
-  if (strcmp(testname, "valid-nil") == 0) {
+  if (strcmp(testname, "nil") == 0) {
     ml_object_debug_dump(the_nil);
-  } else if (strcmp(testname, "invalid-nil") == 0) {
-    ml_object *invalid_nil = ml_object_new_nil();
-    ml_object_debug_dump(invalid_nil);
   } else if (strcmp(testname, "number") == 0) {
     ml_object *num = ml_object_new_number(42);
     ml_object_debug_dump(num);

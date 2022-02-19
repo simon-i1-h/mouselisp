@@ -31,16 +31,7 @@ test_match(
     r'[0-9a-f]+ NIL\n'
     r'--------------------\n'
     r'\Z',
-    'valid-nil'
-)
-test_match(
-    r'\A'
-    r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
-    r'--------------------\n'
-    r'[0-9a-f]+ INVALID NIL\n'
-    r'--------------------\n'
-    r'\Z',
-    'invalid-nil'
+    'nil'
 )
 
 # number

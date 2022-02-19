@@ -3,12 +3,6 @@
 
 #include "mouselisp.h"
 
-ml_object *ml_object_new_nil(void) {
-  ml_object *ret = xgcmalloc(sizeof(ml_object));
-  *ret = (ml_object){.tag = ML_OBJECT_NIL};
-  return ret;
-}
-
 ml_object *ml_object_new_cons(ml_object *car, ml_object *cdr) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
   ml_cons cons = {.car = car, .cdr = cdr};
@@ -85,11 +79,6 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
   *known_objs = ml_object_new_cons(obj, *known_objs);
 
   switch (obj->tag) {
-  case ML_OBJECT_NIL:
-    if (obj != the_nil)
-      rlogmsgf("INVALID ");
-    rlogmsg("NIL");
-    break;
   case ML_OBJECT_BOOL:
     rlogmsg("BOOL: %s", obj->boolean ? "true" : "false");
     break;
@@ -117,7 +106,10 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
     }
     break;
   case ML_OBJECT_POINTER:
-    rlogmsg("POINTER: %" PRIxPTR, (uintptr_t)obj->ptr);
+    if (obj == the_nil)
+      rlogmsg("NIL");
+    else
+      rlogmsg("POINTER: %" PRIxPTR, (uintptr_t)obj->ptr);
   }
 }
 
