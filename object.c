@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <inttypes.h>
 
 #include "mouselisp.h"
@@ -60,6 +61,12 @@ ml_object *ml_object_new_normal_function(ml_object *closure, ml_object *args,
   return ret;
 }
 
+ml_object *ml_object_new_pointer(ml_object *ptr) {
+  ml_object *ret = xgcmalloc(sizeof(ml_object));
+  *ret = (ml_object){.tag = ML_OBJECT_POINTER, .ptr = ptr};
+  return ret;
+}
+
 int ml_list_exists(ml_object *list, ml_object *ptr) {
   ml_object *o = list;
   while (o->tag == ML_OBJECT_CONS) {
@@ -116,6 +123,9 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
       rlogmsg("BUILTIN FUNCTION: %" PRIxPTR, (uintptr_t)obj->func.builtin);
       break;
     }
+    fatal("unrechable");
+  case ML_OBJECT_POINTER:
+    rlogmsg("POINTER: %" PRIxPTR, (uintptr_t)obj->ptr);
   }
 }
 

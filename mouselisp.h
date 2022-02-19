@@ -133,7 +133,8 @@ typedef enum ml_object_tag {
   ML_OBJECT_NUMBER,
   ML_OBJECT_STRING,
   ML_OBJECT_NAME,
-  ML_OBJECT_FUNCTION
+  ML_OBJECT_FUNCTION,
+  ML_OBJECT_POINTER
 } ml_object_tag;
 
 typedef struct ml_object {
@@ -144,6 +145,7 @@ typedef struct ml_object {
     int num;       /* TODO double? */
     ml_string str; /* string or name */
     ml_function func;
+    ml_object *ptr;
   };
 } ml_object;
 
@@ -156,6 +158,7 @@ ml_object *ml_object_new_name(const char *str);
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
 ml_object *ml_object_new_normal_function(ml_object *closure, ml_object *args,
                                          ml_object *body);
+ml_object *ml_object_new_pointer(ml_object *ptr);
 int ml_list_exists(ml_object *list, ml_object *ptr);
 void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
                                 int depth);
@@ -193,6 +196,8 @@ ml_object *ml_div(ml_machine *m, ml_object *args);
 ml_object *ml_car(ml_machine *m, ml_object *args);
 ml_object *ml_cdr(ml_machine *m, ml_object *args);
 ml_object *ml_cons_(ml_machine *m, ml_object *args); /* TODO naming */
+ml_object *ml_ref(ml_machine *m, ml_object *args);
+ml_object *ml_deref(ml_machine *m, ml_object *args);
 
 /* init.c */
 

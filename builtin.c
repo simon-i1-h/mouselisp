@@ -160,3 +160,37 @@ ml_object *ml_cons_(ml_machine *m, ml_object *args) {
 
   return ml_object_new_cons(car, cdr);
 }
+
+ml_object *ml_ref(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *x = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_pointer(x);
+}
+
+ml_object *ml_deref(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *x = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  if (x->tag != ML_OBJECT_POINTER)
+    fatal("invalid args");
+
+  /* TODO nilオブジェクトを参照型にした場合、ここで例外を出す必要がある。 */
+  return x->ptr;
+}

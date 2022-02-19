@@ -47,6 +47,18 @@ ml_object *ml_prelude(void) {
     ml_object *named = ml_object_new_cons(name, value);
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
+  {
+    ml_object *name = ml_object_new_name("&");
+    ml_object *value = ml_object_new_builtin_function(ml_ref);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
+    ml_object *name = ml_object_new_name("->");
+    ml_object *value = ml_object_new_builtin_function(ml_deref);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
 
   return ret;
 }
@@ -232,6 +244,7 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
   case ML_OBJECT_BOOL:
   case ML_OBJECT_STRING:
   case ML_OBJECT_FUNCTION:
+  case ML_OBJECT_POINTER:
     return root;
   case ML_OBJECT_NAME:
     ret = ml_find_named_object(m, root->str.str);

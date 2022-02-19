@@ -259,6 +259,30 @@ void test_builtin(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 1);
   }
+
+  /* ref */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(& 42)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_POINTER);
+    ml_test(result->ptr != NULL);
+  }
+
+  /* deref */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(-> (& 42))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 42);
+  }
 }
 
 void test_special_forms(void) {
@@ -518,6 +542,10 @@ void test_object_dump_main(const char *testname) {
     ml_object *cdr = ml_object_new_bool(0);
     ml_object *cons = ml_object_new_cons(car, cdr);
     ml_object_debug_dump(cons);
+  } else if (strcmp(testname, "pointer") == 0) {
+    ml_object *fake = ml_object_new_number(42);
+    ml_object *str = ml_object_new_pointer(fake);
+    ml_object_debug_dump(str);
   } else if (strcmp(testname, "same-reference") == 0) {
     ml_object *b = ml_object_new_bool(1);
     ml_object *cons = ml_object_new_cons(b, b);
