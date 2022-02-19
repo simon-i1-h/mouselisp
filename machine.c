@@ -89,6 +89,24 @@ ml_object *ml_prelude(void) {
     ml_object *named = ml_object_new_cons(name, value);
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
+  {
+    ml_object *name = ml_object_new_name("and");
+    ml_object *value = ml_object_new_builtin_function(ml_and);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
+    ml_object *name = ml_object_new_name("or");
+    ml_object *value = ml_object_new_builtin_function(ml_or);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
+    ml_object *name = ml_object_new_name("not");
+    ml_object *value = ml_object_new_builtin_function(ml_not);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
 
   return ret;
 }

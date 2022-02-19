@@ -199,6 +199,9 @@ ml_object *ml_gt(ml_machine *m, ml_object *args);
 ml_object *ml_lt(ml_machine *m, ml_object *args);
 ml_object *ml_ge(ml_machine *m, ml_object *args);
 ml_object *ml_le(ml_machine *m, ml_object *args);
+ml_object *ml_and(ml_machine *m, ml_object *args);
+ml_object *ml_or(ml_machine *m, ml_object *args);
+ml_object *ml_not(ml_machine *m, ml_object *args);
 
 /* init.c */
 

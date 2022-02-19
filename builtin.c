@@ -324,3 +324,73 @@ ml_object *ml_le(ml_machine *m, ml_object *args) {
 
   return ml_object_new_bool(a->num <= b->num);
 }
+
+ml_object *ml_and(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *b = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  if (a->tag != ML_OBJECT_BOOL)
+    fatal("invalid args");
+
+  if (b->tag != ML_OBJECT_BOOL)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->boolean && b->boolean);
+}
+
+ml_object *ml_or(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *b = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  if (a->tag != ML_OBJECT_BOOL)
+    fatal("invalid args");
+
+  if (b->tag != ML_OBJECT_BOOL)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->boolean || b->boolean);
+}
+
+ml_object *ml_not(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  if (a->tag != ML_OBJECT_BOOL)
+    fatal("invalid args");
+
+  return ml_object_new_bool(!a->boolean);
+}
