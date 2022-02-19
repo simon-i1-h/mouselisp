@@ -76,7 +76,8 @@ ml_object *ml_def(ml_machine *m, ml_object *body) {
 
   ml_object *evaled = ml_machine_eval(m, value);
   ml_object *named = ml_object_new_cons(name, evaled);
-  m->named_objs->cons.cdr = ml_object_new_cons(named, m->named_objs->cons.cdr);
+  m->named_objs->cons.cdr =
+      ml_object_new_cons(named, m->named_objs->cons.cdr);
   return name;
 }
 

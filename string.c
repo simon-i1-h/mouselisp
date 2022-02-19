@@ -10,11 +10,7 @@ ml_string ml_string_new_str(const char *str) {
   char *retstr = xgcmalloc(capacity);
   memcpy(retstr, str, len + 1);
 
-  return (ml_string){
-    .str = retstr,
-    .capacity = capacity,
-    .len = len
-  };
+  return (ml_string){.str = retstr, .capacity = capacity, .len = len};
 }
 
 void ml_string_concat_char(ml_string *s, int c) {

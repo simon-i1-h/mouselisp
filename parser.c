@@ -21,9 +21,7 @@ inline static int is_name(unsigned char c) {
          (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-inline static int is_number(unsigned char c) {
-  return c >= '0' && c <= '9';
-}
+inline static int is_number(unsigned char c) { return c >= '0' && c <= '9'; }
 
 inline static int is_name_rest(unsigned char c) {
   return is_sign(c) || is_name(c) || is_number(c);

@@ -50,8 +50,8 @@ ml_object *ml_object_new_builtin_function(ml_builtin *builtin) {
   return ret;
 }
 
-ml_object *ml_object_new_normal_function(ml_object *closure,
-                                         ml_object *args, ml_object *body) {
+ml_object *ml_object_new_normal_function(ml_object *closure, ml_object *args,
+                                         ml_object *body) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
   ml_function func = {.tag = ML_FUNCTION_NORMAL,
                       .normal = {.args = args, .body = body},

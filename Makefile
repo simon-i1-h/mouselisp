@@ -1,4 +1,4 @@
-.PHONY: all test clean coverage bear loc
+.PHONY: all test clean coverage bear loc format
 
 CC = clang
 CFLAGS = -Wall -Wextra -Og -g3 -std=c17 -pedantic -Wimplicit-fallthrough \
@@ -40,5 +40,8 @@ test: all
 
 loc:
 	wc -l mouselisp.h $(SRCS)
+
+format:
+	clang-format -i mouselisp.h $(SRCS)
 
 -include $(DEPS)

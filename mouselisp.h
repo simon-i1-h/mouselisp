@@ -154,8 +154,8 @@ ml_object *ml_object_new_number(int num);
 ml_object *ml_object_new_string(const char *str);
 ml_object *ml_object_new_name(const char *str);
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
-ml_object *ml_object_new_normal_function(ml_object *closure,
-                                         ml_object *args, ml_object *body);
+ml_object *ml_object_new_normal_function(ml_object *closure, ml_object *args,
+                                         ml_object *body);
 int ml_list_exists(ml_object *list, ml_object *ptr);
 void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
                                 int depth);
