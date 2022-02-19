@@ -57,14 +57,12 @@ void test_object(void) {
   {
     ml_object *str = ml_object_new_string("");
     ml_test(str->tag == ML_OBJECT_STRING);
-    ml_string expected = ml_string_new_str("");
-    ml_test(ml_string_strcmp(&str->str, &expected) == 0);
+    ml_test(strcmp(str->str.str, "") == 0);
   }
   {
     ml_object *str = ml_object_new_string("fox");
     ml_test(str->tag == ML_OBJECT_STRING);
-    ml_string expected = ml_string_new_str("fox");
-    ml_test(ml_string_strcmp(&str->str, &expected) == 0);
+    ml_test(strcmp(str->str.str, "fox") == 0);
   }
 
   /* cons */

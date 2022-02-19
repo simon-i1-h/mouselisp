@@ -35,7 +35,3 @@ void ml_string_concat_string(ml_string *s, const char *str) {
   for (size_t i = 0; i < len; i++)
     ml_string_concat_char(s, str[i]);
 }
-
-int ml_string_strcmp(ml_string *a, ml_string *b) {
-  return strcmp(a->str, b->str);
-}

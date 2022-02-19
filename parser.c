@@ -162,7 +162,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
 
   ml_read_char c;
   char first;
-  ml_string strbuf = (ml_string){0};
+  ml_string strbuf = ml_string_new_str("");
 
   for (;;) {
     c = ml_file_read(&p->file);
