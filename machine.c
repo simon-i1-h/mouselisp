@@ -198,7 +198,7 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
     /* apply */
     ml_object *curr_table = m->named_objs;
     m->named_objs = new_table;
-    ml_object *ret = ml_machine_eval_list(m, func.normal.body);
+    ml_object *ret = ml_machine_eval(m, func.normal.body);
     m->named_objs = curr_table;
     return ret;
   }
