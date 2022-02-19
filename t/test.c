@@ -129,14 +129,16 @@ void test_parser(void) {
 
   /* comment */
   {
-    ml_parser parser = ml_parser_new_str("; comment...\n" "(+ 1 2)\n");
+    ml_parser parser = ml_parser_new_str("; comment...\n"
+                                         "(+ 1 2)\n");
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
   }
   {
     /* EOF */
-    ml_parser parser = ml_parser_new_str("(+ 1 2)\n" "; comment...");
+    ml_parser parser = ml_parser_new_str("(+ 1 2)\n"
+                                         "; comment...");
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
@@ -1058,8 +1060,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *cons = ml_object_new_cons(b, b);
     ml_object_debug_dump(cons);
   } else if (strcmp(testname, "circular-list") == 0) {
-    ml_object *list3 =
-        ml_object_new_cons(ml_object_new_name("3rd"), the_nil);
+    ml_object *list3 = ml_object_new_cons(ml_object_new_name("3rd"), the_nil);
     ml_object *list2 = ml_object_new_cons(ml_object_new_name("2nd"), list3);
     ml_object *list1 = ml_object_new_cons(ml_object_new_name("1st"), list2);
     list3->cons.cdr = list1;

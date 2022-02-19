@@ -1,5 +1,5 @@
-#include <stdint.h>
 #include <inttypes.h>
+#include <stdint.h>
 
 #include "mouselisp.h"
 
@@ -97,8 +97,10 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
     switch (obj->func.tag) {
     case ML_FUNCTION_NORMAL:
       rlogmsg("NORMAL FUNCTION (ARGS, BODY):");
-      ml_object_debug_dump_recur(obj->func.normal.args, known_objs, depth + 1);
-      ml_object_debug_dump_recur(obj->func.normal.body, known_objs, depth + 1);
+      ml_object_debug_dump_recur(obj->func.normal.args, known_objs,
+                                 depth + 1);
+      ml_object_debug_dump_recur(obj->func.normal.body, known_objs,
+                                 depth + 1);
       break;
     case ML_FUNCTION_BUILTIN:
       rlogmsg("BUILTIN FUNCTION: %" PRIxPTR, (uintptr_t)obj->func.builtin);
