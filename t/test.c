@@ -72,8 +72,8 @@ void test_object(void) {
     ml_object *car = ml_object_new_number(42);
     ml_object *cdr = ml_object_new_bool(0);
     ml_object *cons = ml_object_new_cons(car, cdr);
-    uintptr_t ptrs[3] = {(uintptr_t)cons->cons.car,
-                         (uintptr_t)cons->cons.cdr, (uintptr_t)cons};
+    uintptr_t ptrs[3] = {(uintptr_t)cons->cons.car, (uintptr_t)cons->cons.cdr,
+                         (uintptr_t)cons};
     ml_test(cons->tag == ML_OBJECT_CONS);
     ml_test(cons->cons.car->tag == ML_OBJECT_NUMBER);
     ml_test(cons->cons.car->num == 42);
@@ -88,8 +88,8 @@ void test_object(void) {
   {
     ml_object *b = ml_object_new_bool(1);
     ml_object *cons = ml_object_new_cons(b, b);
-    uintptr_t ptrs[3] = {(uintptr_t)cons->cons.car,
-                         (uintptr_t)cons->cons.cdr, (uintptr_t)cons};
+    uintptr_t ptrs[3] = {(uintptr_t)cons->cons.car, (uintptr_t)cons->cons.cdr,
+                         (uintptr_t)cons};
     ml_test(ptrarr_in((uintptr_t)b, ptrs, countof(ptrs), 2));
     ml_test(ptrarr_in((uintptr_t)cons, ptrs, countof(ptrs), 1));
     ml_test(cons->cons.car == cons->cons.cdr);
@@ -285,7 +285,8 @@ void test_special_forms(void) {
   }
   {
     ml_machine machine = ml_machine_new();
-    const char *code = "(if (car (cons true false)) (car (cons 10 20)) (cdr (cons 30 40)))";
+    const char *code =
+        "(if (car (cons true false)) (car (cons 10 20)) (cdr (cons 30 40)))";
     ml_parser parser = ml_parser_new_str(code);
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
@@ -296,7 +297,8 @@ void test_special_forms(void) {
   }
   {
     ml_machine machine = ml_machine_new();
-    const char *code = "(if (cdr (cons true false)) (car (cons 10 20)) (cdr (cons 30 40)))";
+    const char *code =
+        "(if (cdr (cons true false)) (car (cons 10 20)) (cdr (cons 30 40)))";
     ml_parser parser = ml_parser_new_str(code);
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
@@ -506,12 +508,10 @@ void test_object_dump_main(const char *testname) {
     ml_object *cons = ml_object_new_cons(b, b);
     ml_object_debug_dump(cons);
   } else if (strcmp(testname, "circular-list") == 0) {
-    ml_object *list3 = ml_object_new_cons(
-        ml_object_new_string("3rd"), the_nil);
-    ml_object *list2 = ml_object_new_cons(
-        ml_object_new_string("2nd"), list3);
-    ml_object *list1 = ml_object_new_cons(
-        ml_object_new_string("1st"), list2);
+    ml_object *list3 =
+        ml_object_new_cons(ml_object_new_string("3rd"), the_nil);
+    ml_object *list2 = ml_object_new_cons(ml_object_new_string("2nd"), list3);
+    ml_object *list1 = ml_object_new_cons(ml_object_new_string("1st"), list2);
     list3->cons.cdr = list1;
     ml_object_debug_dump(list1);
   } else {
