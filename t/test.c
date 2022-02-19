@@ -570,6 +570,148 @@ void test_builtin(void) {
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
+
+  /* is_cons */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(cons? (cons 1 2))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(cons? 1)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* is_bool */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(bool? false)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(bool? 1)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* is_num */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(num? 0)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(num? true)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* is_name */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(name? (quote x))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(name? 1)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* is_func */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(fn? (fn nil nil))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(fn? 1)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* is_ptr */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(ptr? (& 1))");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(ptr? nil)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(ptr? 1)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
 }
 
 void test_special_forms(void) {

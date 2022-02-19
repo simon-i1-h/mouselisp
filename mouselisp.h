@@ -203,6 +203,12 @@ ml_object *ml_le(ml_machine *m, ml_object *args);
 ml_object *ml_and(ml_machine *m, ml_object *args);
 ml_object *ml_or(ml_machine *m, ml_object *args);
 ml_object *ml_not(ml_machine *m, ml_object *args);
+ml_object *ml_is_cons(ml_machine *m, ml_object *args);
+ml_object *ml_is_bool(ml_machine *m, ml_object *args);
+ml_object *ml_is_num(ml_machine *m, ml_object *args);
+ml_object *ml_is_name(ml_machine *m, ml_object *args);
+ml_object *ml_is_func(ml_machine *m, ml_object *args);
+ml_object *ml_is_ptr(ml_machine *m, ml_object *args);
 
 /* init.c */
 

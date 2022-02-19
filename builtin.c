@@ -420,3 +420,93 @@ ml_object *ml_not(ml_machine *m, ml_object *args) {
 
   return ml_object_new_bool(!a->boolean);
 }
+
+ml_object *ml_is_cons(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->tag == ML_OBJECT_CONS);
+}
+
+ml_object *ml_is_bool(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->tag == ML_OBJECT_BOOL);
+}
+
+ml_object *ml_is_num(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->tag == ML_OBJECT_NUMBER);
+}
+
+ml_object *ml_is_name(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->tag == ML_OBJECT_NAME);
+}
+
+ml_object *ml_is_func(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->tag == ML_OBJECT_FUNCTION);
+}
+
+ml_object *ml_is_ptr(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid args");
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid args");
+
+  return ml_object_new_bool(a->tag == ML_OBJECT_POINTER);
+}
