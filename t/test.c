@@ -53,15 +53,15 @@ void test_object(void) {
     ml_test(b->boolean == 1);
   }
 
-  /* string */
+  /* name */
   {
-    ml_object *str = ml_object_new_string("");
-    ml_test(str->tag == ML_OBJECT_STRING);
+    ml_object *str = ml_object_new_name("");
+    ml_test(str->tag == ML_OBJECT_NAME);
     ml_test(strcmp(str->str.str, "") == 0);
   }
   {
-    ml_object *str = ml_object_new_string("fox");
-    ml_test(str->tag == ML_OBJECT_STRING);
+    ml_object *str = ml_object_new_name("fox");
+    ml_test(str->tag == ML_OBJECT_NAME);
     ml_test(strcmp(str->str.str, "fox") == 0);
   }
 
@@ -532,8 +532,8 @@ void test_object_dump_main(const char *testname) {
   } else if (strcmp(testname, "bool") == 0) {
     ml_object *b = ml_object_new_bool(1);
     ml_object_debug_dump(b);
-  } else if (strcmp(testname, "string") == 0) {
-    ml_object *str = ml_object_new_string("dog");
+  } else if (strcmp(testname, "name") == 0) {
+    ml_object *str = ml_object_new_name("dog");
     ml_object_debug_dump(str);
   } else if (strcmp(testname, "cons") == 0) {
     ml_object *car = ml_object_new_number(-42);
@@ -568,9 +568,9 @@ void test_object_dump_main(const char *testname) {
     ml_object_debug_dump(cons);
   } else if (strcmp(testname, "circular-list") == 0) {
     ml_object *list3 =
-        ml_object_new_cons(ml_object_new_string("3rd"), the_nil);
-    ml_object *list2 = ml_object_new_cons(ml_object_new_string("2nd"), list3);
-    ml_object *list1 = ml_object_new_cons(ml_object_new_string("1st"), list2);
+        ml_object_new_cons(ml_object_new_name("3rd"), the_nil);
+    ml_object *list2 = ml_object_new_cons(ml_object_new_name("2nd"), list3);
+    ml_object *list1 = ml_object_new_cons(ml_object_new_name("1st"), list2);
     list3->cons.cdr = list1;
     ml_object_debug_dump(list1);
   } else {

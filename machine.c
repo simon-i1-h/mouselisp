@@ -242,7 +242,6 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
     ATTR_FALLTHROUGH;
   case ML_OBJECT_NUMBER:
   case ML_OBJECT_BOOL:
-  case ML_OBJECT_STRING:
   case ML_OBJECT_FUNCTION:
   case ML_OBJECT_POINTER:
     return root;

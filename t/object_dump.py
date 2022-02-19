@@ -65,15 +65,15 @@ test_match(
     'bool'
 )
 
-# string
+# name
 test_match(
     r'\A'
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
     r'--------------------\n'
-    r'[0-9a-f]+ STRING: dog\n'
+    r'[0-9a-f]+ NAME: dog\n'
     r'--------------------\n'
     r'\Z',
-    'string'
+    'name'
 )
 
 # cons
@@ -148,11 +148,11 @@ m = test_match(
     r'[a-zA-Z0-9_./\-]+: [0-9]+: dump object:\n'
     r'--------------------\n'
     r'(?P<list1>[0-9a-f]+) CONS:\n'
-    r'  (?P<elelm1>[0-9a-f]+) STRING: 1st\n'
+    r'  (?P<elelm1>[0-9a-f]+) NAME: 1st\n'
     r'  (?P<list2>[0-9a-f]+) CONS:\n'
-    r'    (?P<elelm2>[0-9a-f]+) STRING: 2nd\n'
+    r'    (?P<elelm2>[0-9a-f]+) NAME: 2nd\n'
     r'    (?P<list3>[0-9a-f]+) CONS:\n'
-    r'      (?P<elem3>[0-9a-f]+) STRING: 3rd\n'
+    r'      (?P<elem3>[0-9a-f]+) NAME: 3rd\n'
     r'      (?P<circular>[0-9a-f]+) \(dup\)\n'
     r'--------------------\n'
     r'\Z',

@@ -130,7 +130,6 @@ typedef enum ml_object_tag {
   ML_OBJECT_CONS,
   ML_OBJECT_BOOL,
   ML_OBJECT_NUMBER,
-  ML_OBJECT_STRING,
   ML_OBJECT_NAME,
   ML_OBJECT_FUNCTION,
   ML_OBJECT_POINTER
@@ -142,7 +141,7 @@ typedef struct ml_object {
     ml_cons cons;
     int boolean;
     int num;       /* TODO double? */
-    ml_string str; /* string or name */
+    ml_string str; /* name */
     ml_function func;
     ml_object *ptr;
   };
@@ -152,7 +151,6 @@ ml_object *ml_object_new_nil(void);
 ml_object *ml_object_new_cons(ml_object *car, ml_object *cdr);
 ml_object *ml_object_new_bool(int boolean);
 ml_object *ml_object_new_number(int num);
-ml_object *ml_object_new_string(const char *str);
 ml_object *ml_object_new_name(const char *str);
 ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
 ml_object *ml_object_new_normal_function(ml_object *closure, ml_object *args,

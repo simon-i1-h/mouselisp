@@ -28,13 +28,6 @@ ml_object *ml_object_new_number(int num) {
   return ret;
 }
 
-ml_object *ml_object_new_string(const char *str) {
-  ml_object *ret = xgcmalloc(sizeof(ml_object));
-  ml_string mlstr = ml_string_new_str(str);
-  *ret = (ml_object){.tag = ML_OBJECT_STRING, .str = mlstr};
-  return ret;
-}
-
 ml_object *ml_object_new_name(const char *str) {
   ml_object *ret = xgcmalloc(sizeof(ml_object));
   ml_string mlstr = ml_string_new_str(str);
@@ -102,9 +95,6 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
     break;
   case ML_OBJECT_NUMBER:
     rlogmsg("NUMBER: %d", obj->num);
-    break;
-  case ML_OBJECT_STRING:
-    rlogmsg("STRING: %s", obj->str.str);
     break;
   case ML_OBJECT_NAME:
     rlogmsg("NAME: %s", obj->str.str);
