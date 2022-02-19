@@ -282,6 +282,166 @@ void test_builtin(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 42);
   }
+
+  /* eq */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(= 2 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(= 2 3)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(= 3 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* gt */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(> 2 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(> 2 3)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(> 3 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+
+  /* lt */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(< 2 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(< 2 3)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(< 3 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+
+  /* ge */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(>= 2 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(>= 2 3)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(>= 3 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+
+  /* le */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(<= 2 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(<= 2 3)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(result->boolean);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(<= 3 2)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_BOOL);
+    ml_test(!result->boolean);
+  }
 }
 
 void test_special_forms(void) {

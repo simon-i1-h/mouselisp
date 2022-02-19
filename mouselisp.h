@@ -194,6 +194,11 @@ ml_object *ml_cdr(ml_machine *m, ml_object *args);
 ml_object *ml_cons_(ml_machine *m, ml_object *args); /* TODO naming */
 ml_object *ml_ref(ml_machine *m, ml_object *args);
 ml_object *ml_deref(ml_machine *m, ml_object *args);
+ml_object *ml_eq(ml_machine *m, ml_object *args);
+ml_object *ml_gt(ml_machine *m, ml_object *args);
+ml_object *ml_lt(ml_machine *m, ml_object *args);
+ml_object *ml_ge(ml_machine *m, ml_object *args);
+ml_object *ml_le(ml_machine *m, ml_object *args);
 
 /* init.c */
 
