@@ -143,6 +143,18 @@ ml_object *ml_fn(ml_machine *m, ml_object *body) {
   return ml_object_new_normal_function(m->named_objs, fn_args, fn_body);
 }
 
+ml_object *ml_do(ml_machine *m, ml_object *body) {
+  ml_object *ret = the_nil;
+
+  for (ml_object *list = body; list != the_nil; list = list->cons.cdr) {
+    if (list->tag != ML_OBJECT_CONS)
+      fatal("invalid body");
+    ret = ml_machine_eval(m, list->cons.car);
+  }
+
+  return ret;
+}
+
 ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *car = root->cons.car;
   ml_object *cdr = root->cons.cdr;
@@ -157,6 +169,8 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
       return ml_def(m, cdr);
     else if (strcmp(name.str, "fn") == 0)
       return ml_fn(m, cdr);
+    else if (strcmp(name.str, "do") == 0)
+      return ml_do(m, cdr);
   }
 
   ml_object *value = ml_machine_eval(m, car);
