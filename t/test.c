@@ -432,6 +432,21 @@ void test_special_forms(void) {
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
+  {
+    /* restore table */
+    ml_machine machine = ml_machine_new();
+    const char *code =
+        "(def f1 (fn (x) x)) (def f2 (fn (x) (do (f1 3) x))) (f2 10)";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 10);
+  }
 
   /* do */
   {
