@@ -369,39 +369,9 @@ ml_object *ml_setcdr(ml_machine *m, ml_object *body) {
   return evaled;
 }
 
-ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
-  ml_object *car = root->cons.car;
-  ml_object *cdr = root->cons.cdr;
-
-  if (car->tag == ML_OBJECT_NAME) {
-    ml_string name = car->str;
-
-    /* special forms */
-    if (strcmp(name.str, "if") == 0)
-      return ml_if(m, cdr);
-    else if (strcmp(name.str, "def") == 0)
-      return ml_def(m, cdr);
-    else if (strcmp(name.str, "fn") == 0)
-      return ml_fn(m, cdr);
-    else if (strcmp(name.str, "do") == 0)
-      return ml_do(m, cdr);
-    else if (strcmp(name.str, "quote") == 0)
-      return ml_quote(m, cdr);
-    else if (strcmp(name.str, "set") == 0)
-      return ml_set(m, cdr);
-    else if (strcmp(name.str, "setcar") == 0)
-      return ml_setcar(m, cdr);
-    else if (strcmp(name.str, "setcdr") == 0)
-      return ml_setcdr(m, cdr);
-  }
-
-  ml_object *value = ml_machine_eval(m, car);
-
-  /* apply a function */
-
-  if (value->tag != ML_OBJECT_FUNCTION)
-    fatal("invalid form");
-  ml_function func = value->func;
+ml_object *ml_machine_apply(ml_machine *m, ml_object *body) {
+  ml_function func = body->cons.car->func;
+  ml_object *cdr = body->cons.cdr;
 
   ml_object *args = the_nil;
   ml_object *tail = args;
@@ -439,6 +409,42 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
     return ret;
   }
   }
+}
+
+ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
+  ml_object *car = root->cons.car;
+  ml_object *cdr = root->cons.cdr;
+
+  if (car->tag == ML_OBJECT_NAME) {
+    ml_string name = car->str;
+
+    /* special forms */
+    if (strcmp(name.str, "if") == 0)
+      return ml_if(m, cdr);
+    else if (strcmp(name.str, "def") == 0)
+      return ml_def(m, cdr);
+    else if (strcmp(name.str, "fn") == 0)
+      return ml_fn(m, cdr);
+    else if (strcmp(name.str, "do") == 0)
+      return ml_do(m, cdr);
+    else if (strcmp(name.str, "quote") == 0)
+      return ml_quote(m, cdr);
+    else if (strcmp(name.str, "set") == 0)
+      return ml_set(m, cdr);
+    else if (strcmp(name.str, "setcar") == 0)
+      return ml_setcar(m, cdr);
+    else if (strcmp(name.str, "setcdr") == 0)
+      return ml_setcdr(m, cdr);
+  }
+
+  ml_object *evaled = ml_machine_eval(m, car);
+
+  if (evaled->tag == ML_OBJECT_FUNCTION) {
+    ml_object *body = ml_object_new_cons(evaled, cdr);
+    return ml_machine_apply(m, body);
+  }
+
+  fatal("invalid form");
 }
 
 ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
