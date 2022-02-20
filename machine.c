@@ -558,20 +558,24 @@ ml_object *ml_machine_eval_top(ml_machine *m, ml_object *root) {
   return ret;
 }
 
-ml_object *ml_machine_xeval2(const char *filename, const char *line, ml_machine *m, ml_object *root) {
+ml_object *ml_machine_xeval2(const char *filename, const char *line,
+                             ml_machine *m, ml_object *root) {
   /* top level error handling */
   m->exc = the_nil;
   if (setjmp(m->last_exc_handler) == 0)
     return ml_machine_eval(m, root);
   else
-    fatal("%s: %s: error: %s", filename, line, m->exc->cons.cdr->cons.car->str.str);
+    fatal("%s: %s: error: %s", filename, line,
+          m->exc->cons.cdr->cons.car->str.str);
 }
 
-ml_object *ml_machine_xeval_top2(const char *filename, const char *line, ml_machine *m, ml_object *root) {
+ml_object *ml_machine_xeval_top2(const char *filename, const char *line,
+                                 ml_machine *m, ml_object *root) {
   /* top level error handling */
   m->exc = the_nil;
   if (setjmp(m->last_exc_handler) == 0)
     return ml_machine_eval_top(m, root);
   else
-    fatal("%s: %s: error: %s", filename, line, m->exc->cons.cdr->cons.car->str.str);
+    fatal("%s: %s: error: %s", filename, line,
+          m->exc->cons.cdr->cons.car->str.str);
 }

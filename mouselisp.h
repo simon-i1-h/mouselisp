@@ -184,8 +184,10 @@ typedef struct ml_parser {
 } ml_parser;
 
 ml_parser ml_parser_new_str(const char *str);
-#define ml_parser_xparse(...) ml_parser_xparse2(__FILE__, stringify(__LINE__), __VA_ARGS__)
-ml_object *ml_parser_xparse2(const char *filename, const char *line, ml_parser *p, ml_machine *m);
+#define ml_parser_xparse(...)                                                \
+  ml_parser_xparse2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+ml_object *ml_parser_xparse2(const char *filename, const char *line,
+                             ml_parser *p, ml_machine *m);
 
 /* machine.c */
 
@@ -198,10 +200,14 @@ typedef struct ml_machine {
 
 ml_machine ml_machine_new(void);
 ml_object *ml_find_named_object(ml_machine *m, const char *name);
-#define ml_machine_xeval(...) ml_machine_xeval2(__FILE__, stringify(__LINE__), __VA_ARGS__)
-ml_object *ml_machine_xeval2(const char *filename, const char *line, ml_machine *m, ml_object *root);
-#define ml_machine_xeval_top(...) ml_machine_xeval_top2(__FILE__, stringify(__LINE__), __VA_ARGS__)
-ml_object *ml_machine_xeval_top2(const char *filename, const char *line, ml_machine *m, ml_object *root);
+#define ml_machine_xeval(...)                                                \
+  ml_machine_xeval2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+ml_object *ml_machine_xeval2(const char *filename, const char *line,
+                             ml_machine *m, ml_object *root);
+#define ml_machine_xeval_top(...)                                            \
+  ml_machine_xeval_top2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+ml_object *ml_machine_xeval_top2(const char *filename, const char *line,
+                                 ml_machine *m, ml_object *root);
 
 /* builtin.c */
 
@@ -254,7 +260,8 @@ void mouselisp_init(void);
 #define ml_throw(...) ml_throw2(__FILE__, stringify(__LINE__), __VA_ARGS__)
 
 ATTR_NORETURN
-void ml_throw2(const char *filename, const char *line, ml_machine *m, ml_object *err);
+void ml_throw2(const char *filename, const char *line, ml_machine *m,
+               ml_object *err);
 
 /* t/test.c */
 

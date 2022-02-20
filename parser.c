@@ -270,11 +270,13 @@ ml_object *ml_parser_parse(ml_parser *p, ml_machine *m) {
   }
 }
 
-ml_object *ml_parser_xparse2(const char *filename, const char *line, ml_parser *p, ml_machine *m) {
+ml_object *ml_parser_xparse2(const char *filename, const char *line,
+                             ml_parser *p, ml_machine *m) {
   /* top level error handling */
   m->exc = the_nil;
   if (setjmp(m->last_exc_handler) == 0)
     return ml_parser_parse(p, m);
   else
-    fatal("%s: %s: error: %s", filename, line, m->exc->cons.cdr->cons.car->str.str);
+    fatal("%s: %s: error: %s", filename, line,
+          m->exc->cons.cdr->cons.car->str.str);
 }
