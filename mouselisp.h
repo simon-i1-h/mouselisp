@@ -184,6 +184,7 @@ typedef struct ml_parser {
 } ml_parser;
 
 ml_parser ml_parser_new_str(const char *str);
+ml_object *ml_parser_parse(ml_parser *p, ml_machine *m);
 #define ml_parser_xparse(...)                                                \
   ml_parser_xparse2(__FILE__, stringify(__LINE__), __VA_ARGS__)
 ml_object *ml_parser_xparse2(const char *filename, const char *line,
@@ -200,6 +201,7 @@ typedef struct ml_machine {
 
 ml_machine ml_machine_new(void);
 ml_object *ml_find_named_object(ml_machine *m, const char *name);
+ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
 #define ml_machine_xeval(...)                                                \
   ml_machine_xeval2(__FILE__, stringify(__LINE__), __VA_ARGS__)
 ml_object *ml_machine_xeval2(const char *filename, const char *line,
