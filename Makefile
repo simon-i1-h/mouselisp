@@ -41,6 +41,7 @@ test: all
 
 loc:
 	wc -l mouselisp.h $(SRCS)
+	wc -l t/object_dump.py
 
 format:
 	clang-format -i mouselisp.h $(SRCS)
