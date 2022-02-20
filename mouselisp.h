@@ -3,6 +3,7 @@
 
 #include <gc/gc.h>
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 
@@ -186,10 +187,15 @@ ml_object *ml_parser_parse(ml_parser *p);
 
 typedef struct ml_machine {
   ml_object *named_objs;
+  jmp_buf last_exc_handler;
+  /* エラーオブジェクトの形式: (error-func-ptr error-func-name ...) */
+  ml_object *exc;
 } ml_machine;
 
 ml_machine ml_machine_new(void);
-ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
+ml_object *ml_find_named_object(ml_machine *m, const char *name);
+ml_object *ml_machine_xeval(ml_machine *m, ml_object *root);
+ml_object *ml_machine_xeval_top(ml_machine *m, ml_object *root);
 
 /* builtin.c */
 
@@ -219,6 +225,9 @@ ml_object *ml_is_func(ml_machine *m, ml_object *args);
 ml_object *ml_is_ptr(ml_machine *m, ml_object *args);
 ml_object *ml_list(ml_machine *m, ml_object *args);
 ml_object *ml_unique(ml_machine *m, ml_object *args);
+ml_object *ml_eval_error(ml_machine *m, ml_object *args);
+ml_object *ml_nil_error(ml_machine *m, ml_object *args);
+ml_object *ml_noname_error(ml_machine *m, ml_object *args);
 
 /* init.c */
 
@@ -228,7 +237,16 @@ extern ml_object *the_nil;
 extern int unique_tid;
 extern int unique_seq;
 
+extern int exc_log;
+
 void mouselisp_init(void);
+
+/* exception.c */
+
+#define ml_throw(...) ml_throw2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+
+ATTR_NORETURN
+void ml_throw2(const char *filename, const char *line, ml_machine *m, ml_object *err);
 
 /* t/test.c */
 

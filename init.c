@@ -6,6 +6,8 @@ ml_object *the_nil;
 int unique_tid;
 int unique_seq;
 
+int exc_log = 1;
+
 void mouselisp_init(void) {
   /* TODO GC効いてるのかよく分からん */
   GC_INIT();

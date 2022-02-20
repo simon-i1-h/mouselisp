@@ -161,6 +161,24 @@ ml_object *ml_prelude(void) {
     ml_object *named = ml_object_new_cons(name, value);
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
+  {
+    ml_object *name = ml_object_new_name("eval-error");
+    ml_object *value = ml_object_new_builtin_function(ml_eval_error);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
+    ml_object *name = ml_object_new_name("nil-error");
+    ml_object *value = ml_object_new_builtin_function(ml_nil_error);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
+    ml_object *name = ml_object_new_name("noname-error");
+    ml_object *value = ml_object_new_builtin_function(ml_noname_error);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
 
   return ret;
 }
@@ -169,24 +187,26 @@ ml_machine ml_machine_new(void) {
   return (ml_machine){.named_objs = ml_prelude()};
 }
 
+ml_object *ml_machine_eval(ml_machine *m, ml_object *root);
+
 ml_object *ml_def(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *name = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *value = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   if (name->tag != ML_OBJECT_NAME)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *evaled = ml_machine_eval(m, value);
   ml_object *named = ml_object_new_cons(name, evaled);
@@ -199,26 +219,26 @@ ml_object *ml_if(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *cond = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *then = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *else_ = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *evaled = ml_machine_eval(m, cond);
   if (evaled->tag != ML_OBJECT_BOOL)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   return ml_machine_eval(m, evaled->boolean ? then : else_);
 }
 
@@ -231,34 +251,34 @@ ml_object *ml_find_named(ml_machine *m, const char *name) {
     if (strcmp(pair->cons.car->str.str, name) == 0)
       return pair;
   }
-  return NULL;
+  ml_throw(m, ml_noname_error(m, the_nil));
 }
 
 ml_object *ml_find_named_object(ml_machine *m, const char *name) {
   ml_object *named = ml_find_named(m, name);
-  return named == NULL ? NULL : named->cons.cdr;
+  return named->cons.cdr;
 }
 
 ml_object *ml_fn(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *fn_args = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *fn_body = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   /* validate arg list */
   for (ml_object *l = fn_args; l != the_nil; l = l->cons.cdr)
     if (l->tag != ML_OBJECT_CONS || l->cons.car->tag != ML_OBJECT_NAME)
-      fatal("invalid body");
+      ml_throw(m, ml_eval_error(m, the_nil));
 
   return ml_object_new_normal_function(m->named_objs, fn_args, fn_body);
 }
@@ -268,7 +288,7 @@ ml_object *ml_do(ml_machine *m, ml_object *body) {
 
   for (ml_object *list = body; list != the_nil; list = list->cons.cdr) {
     if (list->tag != ML_OBJECT_CONS)
-      fatal("invalid body");
+      ml_throw(m, ml_eval_error(m, the_nil));
     ret = ml_machine_eval(m, list->cons.car);
   }
 
@@ -280,12 +300,12 @@ ml_object *ml_quote(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *list = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   return list;
 }
@@ -294,25 +314,22 @@ ml_object *ml_set(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *name = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *value = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   if (name->tag != ML_OBJECT_NAME)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *named = ml_find_named(m, name->str.str);
-  if (named == NULL)
-    fatal("%s is not defined.", name->str.str);
-
   ml_object *evaled = ml_machine_eval(m, value);
   named->cons.cdr = evaled;
 
@@ -323,26 +340,24 @@ ml_object *ml_setcar(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *name = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *value = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   if (name->tag != ML_OBJECT_NAME)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *old_value = ml_find_named_object(m, name->str.str);
-  if (old_value == NULL)
-    fatal("%s is not defined.", name->str.str);
   if (old_value->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *evaled = ml_machine_eval(m, value);
   old_value->cons.car = evaled;
@@ -354,26 +369,24 @@ ml_object *ml_setcdr(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *name = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *value = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   if (name->tag != ML_OBJECT_NAME)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *old_value = ml_find_named_object(m, name->str.str);
-  if (old_value == NULL)
-    fatal("%s is not defined.", name->str.str);
   if (old_value->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   ml_object *evaled = ml_machine_eval(m, value);
   old_value->cons.cdr = evaled;
@@ -386,22 +399,22 @@ ml_object *ml_macro_(ml_machine *m, ml_object *body) {
   ml_object *curr = body;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *macro_args = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr->tag != ML_OBJECT_CONS)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
   ml_object *macro_body = curr->cons.car;
   curr = curr->cons.cdr;
 
   if (curr != the_nil)
-    fatal("invalid body");
+    ml_throw(m, ml_eval_error(m, the_nil));
 
   /* validate arg list */
   for (ml_object *l = macro_args; l != the_nil; l = l->cons.cdr)
     if (l->tag != ML_OBJECT_CONS || l->cons.car->tag != ML_OBJECT_NAME)
-      fatal("invalid body");
+      ml_throw(m, ml_eval_error(m, the_nil));
 
   return ml_object_new_macro(macro_args, macro_body);
 }
@@ -432,7 +445,7 @@ ml_object *ml_machine_eval_function(ml_machine *m, ml_object *body) {
     for (; name != the_nil && arg != the_nil;
          name = name->cons.cdr, arg = arg->cons.cdr) {
       if (name == the_nil || arg == the_nil)
-        fatal("mismatched number of args");
+        ml_throw(m, ml_eval_error(m, the_nil));
       ml_object *named = ml_object_new_cons(name->cons.car, arg->cons.car);
       new_table = ml_object_new_cons(named, new_table);
     }
@@ -458,7 +471,7 @@ ml_object *ml_machine_eval_macro(ml_machine *m, ml_object *body) {
   for (; name != the_nil && arg != the_nil;
        name = name->cons.cdr, arg = arg->cons.cdr) {
     if (name == the_nil || arg == the_nil)
-      fatal("mismatched number of args");
+      ml_throw(m, ml_eval_error(m, the_nil));
     ml_object *named = ml_object_new_cons(name->cons.car, arg->cons.car);
     new_table = ml_object_new_cons(named, new_table);
   }
@@ -508,12 +521,10 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   else if (evaled->tag == ML_OBJECT_MACRO)
     return ml_machine_eval_macro(m, body);
 
-  fatal("invalid form");
+  ml_throw(m, ml_eval_error(m, the_nil));
 }
 
 ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
-  ml_object *ret;
-
   switch (root->tag) {
   case ML_OBJECT_NUMBER:
   case ML_OBJECT_BOOL:
@@ -522,11 +533,33 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
   case ML_OBJECT_MACRO:
     return root;
   case ML_OBJECT_NAME:
-    ret = ml_find_named_object(m, root->str.str);
-    if (ret == NULL)
-      fatal("%s is not defined.", root->str.str);
-    return ret;
+    return ml_find_named_object(m, root->str.str);
   case ML_OBJECT_CONS:
     return ml_machine_eval_list(m, root);
   }
+}
+
+ml_object *ml_machine_eval_top(ml_machine *m, ml_object *root) {
+  ml_object *ret = the_nil;
+  for (ml_object *list = root; list != the_nil; list = list->cons.cdr)
+    ret = ml_machine_eval(m, list->cons.car);
+  return ret;
+}
+
+ml_object *ml_machine_xeval(ml_machine *m, ml_object *root) {
+  /* top level error handling */
+  m->exc = the_nil;
+  if (setjmp(m->last_exc_handler) == 0)
+    return ml_machine_eval(m, root);
+  else
+    fatal("error: %s", m->exc->cons.cdr->cons.car->str.str);
+}
+
+ml_object *ml_machine_xeval_top(ml_machine *m, ml_object *root) {
+  /* top level error handling */
+  m->exc = the_nil;
+  if (setjmp(m->last_exc_handler) == 0)
+    return ml_machine_eval_top(m, root);
+  else
+    fatal("error: %s", m->exc->cons.cdr->cons.car->str.str);
 }

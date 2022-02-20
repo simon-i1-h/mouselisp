@@ -174,7 +174,7 @@ void test_machine(void) {
     ml_object *list3 = ml_object_new_cons(b, the_nil);
     ml_object *list2 = ml_object_new_cons(a, list3);
     ml_object *list1 = ml_object_new_cons(f, list2);
-    ml_object *result = ml_machine_eval(&machine, list1);
+    ml_object *result = ml_machine_xeval(&machine, list1);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 30);
   }
@@ -187,7 +187,7 @@ void test_top(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 8);
   }
@@ -199,7 +199,7 @@ void test_top(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 6);
   }
@@ -214,7 +214,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 60);
   }
@@ -226,7 +226,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 30);
   }
@@ -238,7 +238,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 675);
   }
@@ -250,7 +250,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
@@ -262,7 +262,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 0);
   }
@@ -272,7 +272,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 5);
   }
@@ -284,7 +284,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_CONS);
     ml_test(result->cons.car->tag == ML_OBJECT_NUMBER);
     ml_test(result->cons.car->num == 0);
@@ -299,7 +299,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 0);
   }
@@ -311,7 +311,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 1);
   }
@@ -323,7 +323,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_POINTER);
     ml_test(result->ptr != NULL);
   }
@@ -335,7 +335,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 42);
   }
@@ -347,7 +347,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -357,7 +357,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -367,7 +367,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -379,7 +379,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -389,7 +389,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -399,7 +399,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -411,7 +411,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -421,7 +421,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -431,7 +431,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -443,7 +443,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -453,7 +453,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -463,7 +463,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -475,7 +475,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -485,7 +485,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -495,7 +495,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -507,7 +507,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -517,7 +517,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -527,7 +527,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -537,7 +537,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -549,7 +549,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -559,7 +559,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -569,7 +569,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -579,7 +579,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -591,7 +591,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -601,7 +601,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -613,7 +613,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -623,7 +623,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -635,7 +635,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -645,7 +645,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -657,7 +657,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -667,7 +667,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -679,7 +679,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -689,7 +689,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -701,7 +701,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -711,7 +711,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -723,7 +723,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -733,7 +733,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(result->boolean);
   }
@@ -743,7 +743,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_BOOL);
     ml_test(!result->boolean);
   }
@@ -755,7 +755,7 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_CONS);
     ml_test(result->cons.car->tag == ML_OBJECT_NUMBER);
     ml_test(result->cons.car->num == 1);
@@ -789,11 +789,66 @@ void test_builtin(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
+  }
+
+  /* eval error */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(eval-error)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_POINTER);
+    ml_test(result->cons.car->ptr != the_nil);
+    result = result->cons.cdr;
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->cons.car->str.str, "eval-error") == 0);
+    result = result->cons.cdr;
+    ml_test(result == the_nil);
+  }
+
+  /* nil error */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(nil-error)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_POINTER);
+    ml_test(result->cons.car->ptr != the_nil);
+    result = result->cons.cdr;
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->cons.car->str.str, "nil-error") == 0);
+    result = result->cons.cdr;
+    ml_test(result == the_nil);
+  }
+
+  /* noname error */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(noname-error)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_POINTER);
+    ml_test(result->cons.car->ptr != the_nil);
+    result = result->cons.cdr;
+    ml_test(result->tag == ML_OBJECT_CONS);
+    ml_test(result->cons.car->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->cons.car->str.str, "noname-error") == 0);
+    result = result->cons.cdr;
+    ml_test(result == the_nil);
   }
 }
 
@@ -805,7 +860,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 20);
   }
@@ -815,7 +870,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 50);
   }
@@ -827,7 +882,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 10);
   }
@@ -839,7 +894,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 40);
   }
@@ -852,9 +907,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 25);
   }
@@ -865,9 +918,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 40);
   }
@@ -878,9 +929,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 15);
   }
@@ -893,9 +942,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 10);
   }
@@ -906,9 +953,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 10);
   }
@@ -920,9 +965,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 10);
   }
@@ -934,9 +977,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
@@ -948,9 +989,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 5);
   }
@@ -962,9 +1001,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
@@ -977,9 +1014,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 10);
   }
@@ -992,9 +1027,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result == the_nil);
   }
   {
@@ -1004,9 +1037,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 6);
   }
@@ -1017,9 +1048,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 3);
   }
@@ -1032,9 +1061,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NAME);
     ml_test(strcmp(result->str.str, "x") == 0);
   }
@@ -1045,9 +1072,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_CONS);
     ml_test(result->cons.car->tag == ML_OBJECT_NAME);
     ml_test(strcmp(result->cons.car->str.str, "x") == 0);
@@ -1062,9 +1087,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 8);
   }
@@ -1077,9 +1100,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_CONS);
     ml_test(result->cons.car->tag == ML_OBJECT_NUMBER);
     ml_test(result->cons.car->num == 9);
@@ -1095,9 +1116,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_CONS);
     ml_test(result->cons.car->tag == ML_OBJECT_NUMBER);
     ml_test(result->cons.car->num == 1);
@@ -1116,9 +1135,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 42);
   }
@@ -1132,9 +1149,7 @@ void test_special_forms(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result;
-    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
-      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result == the_nil);
   }
 }
@@ -1172,7 +1187,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_object_debug_dump(result);
   } else if (strcmp(testname, "normal-function") == 0) {
     ml_machine machine = ml_machine_new();
@@ -1181,7 +1196,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_object_debug_dump(result);
   } else if (strcmp(testname, "pointer") == 0) {
     ml_object *fake = ml_object_new_number(42);
@@ -1194,7 +1209,7 @@ void test_object_dump_main(const char *testname) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_object_debug_dump(result);
   } else if (strcmp(testname, "same-reference") == 0) {
     ml_object *b = ml_object_new_bool(1);
@@ -1218,7 +1233,7 @@ void test_unique(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NAME);
     ml_test(strcmp(result->str.str, "$0.0") == 0);
   }
@@ -1228,7 +1243,7 @@ void test_unique(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NAME);
     ml_test(strcmp(result->str.str, "$0.1") == 0);
   }
@@ -1238,7 +1253,7 @@ void test_unique(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NAME);
     ml_test(strcmp(result->str.str, "$0.2") == 0);
   }
@@ -1248,7 +1263,7 @@ void test_unique(void) {
     ml_object *root = ml_parser_parse(&parser);
     if (root == NULL)
       fatal("parse");
-    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result->tag == ML_OBJECT_NAME);
     ml_test(strcmp(result->str.str, "$0.3") == 0);
   }
