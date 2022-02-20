@@ -16,6 +16,11 @@ int main(int argc, char **argv) {
     return 0;
   }
 
+  if (argc > 1 && strcmp(argv[1], "--test-unique") == 0) {
+    test_unique();
+    return 0;
+  }
+
   fprintf(stderr, "unknown options.");
   return 1;
 }

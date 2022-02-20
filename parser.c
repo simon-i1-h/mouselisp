@@ -15,10 +15,10 @@ inline static int is_sign(unsigned char c) {
 }
 
 inline static int is_name(unsigned char c) {
-  return (c == '!') || (c == '$') || (c == '%') || (c == '&') || (c == '*') ||
-         (c == '/') || (c == ':') || (c == '<') || (c == '=') || (c == '>') ||
-         (c == '?') || (c == '^') || (c == '_') || (c == '~') ||
-         (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+  return (c == '!') || (c == '%') || (c == '&') || (c == '*') || (c == '/') ||
+         (c == ':') || (c == '<') || (c == '=') || (c == '>') || (c == '?') ||
+         (c == '^') || (c == '_') || (c == '~') || (c >= 'a' && c <= 'z') ||
+         (c >= 'A' && c <= 'Z');
 }
 
 inline static int is_number(unsigned char c) { return c >= '0' && c <= '9'; }

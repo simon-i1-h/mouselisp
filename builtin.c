@@ -515,3 +515,11 @@ ml_object *ml_list(ml_machine *m, ml_object *args) {
   (void)m;
   return args;
 }
+
+ml_object *ml_unique(ml_machine *m, ml_object *args) {
+  (void)m;
+  (void)args;
+  char *str = xgcsprintf("$%d.%d", unique_tid, unique_seq);
+  unique_seq++;
+  return ml_object_new_name(str);
+}

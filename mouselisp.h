@@ -46,6 +46,9 @@ void fatal2(const char *filename, const char *line, const char *fmt, ...);
 void *xgcmalloc(size_t size);
 void *xgcrealloc(void *ptr, size_t size);
 
+ATTR_FMT_PRINTF(1, 2)
+char *xgcsprintf(const char *fmt, ...);
+
 /* file.c */
 
 typedef struct ml_file {
@@ -218,11 +221,15 @@ ml_object *ml_is_name(ml_machine *m, ml_object *args);
 ml_object *ml_is_func(ml_machine *m, ml_object *args);
 ml_object *ml_is_ptr(ml_machine *m, ml_object *args);
 ml_object *ml_list(ml_machine *m, ml_object *args);
+ml_object *ml_unique(ml_machine *m, ml_object *args);
 
 /* init.c */
 
 /* singleton */
 extern ml_object *the_nil;
+
+extern int unique_tid;
+extern int unique_seq;
 
 void mouselisp_init(void);
 
@@ -230,5 +237,6 @@ void mouselisp_init(void);
 
 void test_main(void);
 void test_object_dump_main(const char *testname);
+void test_unique(void);
 
 #endif /* MOUSELISP_H */

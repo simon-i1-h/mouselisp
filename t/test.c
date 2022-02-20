@@ -770,6 +770,31 @@ void test_builtin(void) {
     result = result->cons.cdr;
     ml_test(result == the_nil);
   }
+
+  /* unique */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str(
+        "(def my-max\n"
+        "  (macro (a b)\n"
+        "    (do\n"
+        "      (def a_u (unique))\n"
+        "      (def b_u (unique))\n"
+        "      (list\n"
+        "        (quote do)\n"
+        "        (list (quote def) a_u a)\n"
+        "        (list (quote def) b_u b)\n"
+        "        (list (quote if) (list (quote >) a_u b_u) a_u b_u)))))\n"
+        "(my-max 3 1)\n");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result;
+    for (ml_object *elem = root; elem != the_nil; elem = elem->cons.cdr)
+      result = ml_machine_eval(&machine, elem->cons.car);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 3);
+  }
 }
 
 void test_special_forms(void) {
@@ -1183,5 +1208,48 @@ void test_object_dump_main(const char *testname) {
     ml_object_debug_dump(list1);
   } else {
     fatal("unknown testname: %s", testname);
+  }
+}
+
+void test_unique(void) {
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(unique)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->str.str, "$0.0") == 0);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(unique)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->str.str, "$0.1") == 0);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(unique)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->str.str, "$0.2") == 0);
+  }
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("(unique)");
+    ml_object *root = ml_parser_parse(&parser);
+    if (root == NULL)
+      fatal("parse");
+    ml_object *result = ml_machine_eval(&machine, root->cons.car);
+    ml_test(result->tag == ML_OBJECT_NAME);
+    ml_test(strcmp(result->str.str, "$0.3") == 0);
   }
 }

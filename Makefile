@@ -37,6 +37,7 @@ clean:
 test: all
 	./$(PROG) --test
 	python t/object_dump.py
+	./$(PROG) --test-unique
 
 loc:
 	wc -l mouselisp.h $(SRCS)

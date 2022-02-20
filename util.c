@@ -73,3 +73,32 @@ void *xgcrealloc(void *ptr, size_t size) {
 
   return ret;
 }
+
+char *xgcvsprintf(const char *fmt, va_list ap) {
+  va_list ap2;
+  int len;
+  char *ret;
+
+  va_copy(ap2, ap);
+  len = vsnprintf(NULL, 0, fmt, ap2);
+  va_end(ap2);
+
+  ret = xgcmalloc(len + 1);
+
+  if ((len = vsnprintf(ret, len + 1, fmt, ap)) < 0)
+    fatal("vsnprintf");
+
+  return ret;
+}
+
+ATTR_FMT_PRINTF(1, 2)
+char *xgcsprintf(const char *fmt, ...) {
+  va_list ap;
+  char *ret;
+
+  va_start(ap, fmt);
+  ret = xgcvsprintf(fmt, ap);
+  va_end(ap);
+
+  return ret;
+}
