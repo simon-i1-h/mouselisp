@@ -550,5 +550,20 @@ ml_object *ml_noname_error(ml_machine *m, ml_object *args) {
   return ml_object_new_cons(ptr, ml_object_new_cons(name, the_nil));
 }
 
-/* TODO ml_arith_error */
-/* TODO ml_syntax_error */
+ml_object *ml_syntax_error(ml_machine *m, ml_object *args) {
+  (void)args;
+  const char *name_str = "syntax-error";
+  ml_object *errfunc = ml_find_named_object(m, name_str);
+  ml_object *ptr = ml_object_new_pointer(errfunc);
+  ml_object *name = ml_object_new_name(name_str);
+  return ml_object_new_cons(ptr, ml_object_new_cons(name, the_nil));
+}
+
+ml_object *ml_arith_error(ml_machine *m, ml_object *args) {
+  (void)args;
+  const char *name_str = "arith-error";
+  ml_object *errfunc = ml_find_named_object(m, name_str);
+  ml_object *ptr = ml_object_new_pointer(errfunc);
+  ml_object *name = ml_object_new_name(name_str);
+  return ml_object_new_cons(ptr, ml_object_new_cons(name, the_nil));
+}

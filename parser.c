@@ -31,12 +31,11 @@ ml_parser ml_parser_new_str(const char *str) {
   return (ml_parser){.file = (ml_file){.str = str}};
 }
 
-ml_object *ml_parser_parse_literal_number(ml_parser *p) {
+ml_object *ml_parser_parse_literal_number(ml_parser *p, ml_machine *m) {
   enum { STATE_START, STATE_ZERO, STATE_INTERGER } st = STATE_START;
   ml_read_char c;
   int sign = 1;
   int ret = 0;
-  int digit, shift;
 
   for (;;) {
     c = ml_file_read(&p->file);
@@ -44,7 +43,7 @@ ml_object *ml_parser_parse_literal_number(ml_parser *p) {
     switch (st) {
     case STATE_START:
       if (c.eof)
-        goto invalid;
+        ml_throw(m, ml_syntax_error(m, the_nil));
 
       if (c.c == '0') {
         st = STATE_ZERO;
@@ -68,7 +67,7 @@ ml_object *ml_parser_parse_literal_number(ml_parser *p) {
         break;
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     case STATE_ZERO:
       if (c.eof || is_end_value(c.c)) {
         if (!c.eof)
@@ -76,7 +75,7 @@ ml_object *ml_parser_parse_literal_number(ml_parser *p) {
         return ml_object_new_number(ret);
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     case STATE_INTERGER:
       if (c.eof || is_end_value(c.c)) {
         if (!c.eof)
@@ -85,25 +84,18 @@ ml_object *ml_parser_parse_literal_number(ml_parser *p) {
       }
 
       if (c.c >= '0' && c.c <= '9') {
-        digit = sign * (c.c - '0');
-        if (chk_muli(&shift, 10, ret) != 0)
-          goto invalid;
-        if (chk_addi(&ret, shift, digit) != 0)
-          goto invalid;
+        ret = chk_addi(m, chk_muli(m, 10, ret), sign * (c.c - '0'));
         break;
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     }
   }
-
-invalid:
-  return NULL;
 }
 
-ml_object *ml_parser_parse_expr(ml_parser *p);
+ml_object *ml_parser_parse_expr(ml_parser *p, ml_machine *m);
 
-ml_object *ml_parser_parse_list(ml_parser *p) {
+ml_object *ml_parser_parse_list(ml_parser *p, ml_machine *m) {
   enum { STATE_START, STATE_LIST } st = STATE_START;
   ml_read_char c;
   ml_object *expr;
@@ -116,17 +108,17 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
     switch (st) {
     case STATE_START:
       if (c.eof)
-        goto invalid;
+        ml_throw(m, ml_syntax_error(m, the_nil));
 
       if (c.c == '(') {
         st = STATE_LIST;
         break;
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     case STATE_LIST:
       if (c.eof)
-        goto invalid;
+        ml_throw(m, ml_syntax_error(m, the_nil));
       if (is_whitespace(c.c))
         continue;
       if (c.c == ';') {
@@ -138,31 +130,23 @@ ml_object *ml_parser_parse_list(ml_parser *p) {
       if (c.c == ')') {
         if (root != the_nil)
           return root;
-        goto invalid;
+        ml_throw(m, ml_syntax_error(m, the_nil));
       }
 
       ml_file_unread(&p->file, c.c);
-      expr = ml_parser_parse_expr(p);
-      if (expr != NULL) {
-        if (root == the_nil) {
-          root = tail = ml_object_new_cons(expr, the_nil);
-        } else {
-          tail->cons.cdr = ml_object_new_cons(expr, the_nil);
-          tail = tail->cons.cdr;
-        }
-        break;
+      expr = ml_parser_parse_expr(p, m);
+      if (root == the_nil) {
+        root = tail = ml_object_new_cons(expr, the_nil);
+      } else {
+        tail->cons.cdr = ml_object_new_cons(expr, the_nil);
+        tail = tail->cons.cdr;
       }
-
-      goto invalid;
+      break;
     }
   }
-
-invalid:
-  return NULL;
 }
 
-/* TODO: NULLを使わず例外を使うかも */
-ml_object *ml_parser_parse_expr(ml_parser *p) {
+ml_object *ml_parser_parse_expr(ml_parser *p, ml_machine *m) {
   enum { STATE_START, STATE_LITERAL_NUMBER, STATE_NAME } st = STATE_START;
 
   ml_read_char c;
@@ -175,7 +159,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
     switch (st) {
     case STATE_START:
       if (c.eof)
-        goto invalid;
+        ml_throw(m, ml_syntax_error(m, the_nil));
       if (is_whitespace(c.c))
         break;
       if (c.c == ';') {
@@ -186,7 +170,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
 
       if (c.c == '(') {
         ml_file_unread(&p->file, c.c);
-        return ml_parser_parse_list(p);
+        return ml_parser_parse_list(p, m);
       }
       if (is_number(c.c) || is_sign(c.c)) {
         first = c.c;
@@ -200,7 +184,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
         break;
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     case STATE_LITERAL_NUMBER:
       if (c.eof || is_end_value(c.c)) {
         if (!c.eof)
@@ -210,14 +194,14 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
           goto name_end;
         } else {
           ml_file_unread(&p->file, first);
-          return ml_parser_parse_literal_number(p);
+          return ml_parser_parse_literal_number(p, m);
         }
       }
 
       if (is_number(c.c)) {
         ml_file_unread(&p->file, c.c);
         ml_file_unread(&p->file, first);
-        return ml_parser_parse_literal_number(p);
+        return ml_parser_parse_literal_number(p, m);
       }
 
       if (is_name(c.c) || is_sign(c.c)) {
@@ -229,7 +213,7 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
         }
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     case STATE_NAME:
       if (c.eof || is_end_value(c.c)) {
         if (!c.eof)
@@ -242,12 +226,10 @@ ml_object *ml_parser_parse_expr(ml_parser *p) {
         break;
       }
 
-      goto invalid;
+      ml_throw(m, ml_syntax_error(m, the_nil));
     }
   }
 
-invalid:
-  return NULL;
 name_end:
   if (strcmp(strbuf.str, "nil") == 0)
     return the_nil;
@@ -259,7 +241,7 @@ name_end:
     return ml_object_new_name(strbuf.str);
 }
 
-ml_object *ml_parser_parse(ml_parser *p) {
+ml_object *ml_parser_parse(ml_parser *p, ml_machine *m) {
   ml_read_char c;
   ml_object *expr;
   ml_object *root = the_nil;
@@ -278,20 +260,21 @@ ml_object *ml_parser_parse(ml_parser *p) {
     }
 
     ml_file_unread(&p->file, c.c);
-    expr = ml_parser_parse_expr(p);
-    if (expr != NULL) {
-      if (root == the_nil) {
-        root = tail = ml_object_new_cons(expr, the_nil);
-      } else {
-        tail->cons.cdr = ml_object_new_cons(expr, the_nil);
-        tail = tail->cons.cdr;
-      }
-      continue;
+    expr = ml_parser_parse_expr(p, m);
+    if (root == the_nil) {
+      root = tail = ml_object_new_cons(expr, the_nil);
+    } else {
+      tail->cons.cdr = ml_object_new_cons(expr, the_nil);
+      tail = tail->cons.cdr;
     }
-
-    goto invalid;
   }
+}
 
-invalid:
-  return NULL;
+ml_object *ml_parser_xparse2(const char *filename, const char *line, ml_parser *p, ml_machine *m) {
+  /* top level error handling */
+  m->exc = the_nil;
+  if (setjmp(m->last_exc_handler) == 0)
+    return ml_parser_parse(p, m);
+  else
+    fatal("%s: %s: error: %s", filename, line, m->exc->cons.cdr->cons.car->str.str);
 }

@@ -93,8 +93,13 @@ void ml_string_concat_string(ml_string *s, const char *str);
 
 /* arith.c */
 
-int chk_muli(int *dst, int a, int b);
-int chk_addi(int *dst, int a, int b);
+typedef struct ml_machine ml_machine;
+
+int chk_muli(ml_machine *m, int a, int b);
+int chk_addi(ml_machine *m, int a, int b);
+int chk_subi(ml_machine *m, int a, int b);
+int chk_divi(ml_machine *m, int a, int b);
+int chk_modi(ml_machine *m, int a, int b);
 
 /* object.c */
 
@@ -109,8 +114,6 @@ typedef enum ml_function_tag {
   ML_FUNCTION_NORMAL,
   ML_FUNCTION_BUILTIN
 } ml_function_tag;
-
-typedef struct ml_machine ml_machine;
 
 typedef ml_object *(ml_builtin)(ml_machine *, ml_object *);
 
@@ -181,7 +184,8 @@ typedef struct ml_parser {
 } ml_parser;
 
 ml_parser ml_parser_new_str(const char *str);
-ml_object *ml_parser_parse(ml_parser *p);
+#define ml_parser_xparse(...) ml_parser_xparse2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+ml_object *ml_parser_xparse2(const char *filename, const char *line, ml_parser *p, ml_machine *m);
 
 /* machine.c */
 
@@ -228,6 +232,8 @@ ml_object *ml_unique(ml_machine *m, ml_object *args);
 ml_object *ml_eval_error(ml_machine *m, ml_object *args);
 ml_object *ml_nil_error(ml_machine *m, ml_object *args);
 ml_object *ml_noname_error(ml_machine *m, ml_object *args);
+ml_object *ml_syntax_error(ml_machine *m, ml_object *args);
+ml_object *ml_arith_error(ml_machine *m, ml_object *args);
 
 /* init.c */
 
