@@ -194,7 +194,7 @@ ml_object *ml_parser_xparse2(const char *filename, const char *line,
 
 typedef struct ml_machine {
   ml_object *named_objs;
-  jmp_buf last_exc_handler;
+  jmp_buf *last_exc_handler;
   /* エラーオブジェクトの形式: (error-func-ptr error-func-name ...) */
   ml_object *exc;
 } ml_machine;
@@ -244,6 +244,7 @@ ml_object *ml_nil_error(ml_machine *m, ml_object *args);
 ml_object *ml_noname_error(ml_machine *m, ml_object *args);
 ml_object *ml_syntax_error(ml_machine *m, ml_object *args);
 ml_object *ml_arith_error(ml_machine *m, ml_object *args);
+ml_object *ml_throw_(ml_machine *m, ml_object *args);
 
 /* init.c */
 

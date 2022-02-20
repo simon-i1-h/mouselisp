@@ -567,3 +567,18 @@ ml_object *ml_arith_error(ml_machine *m, ml_object *args) {
   ml_object *name = ml_object_new_name(name_str);
   return ml_object_new_cons(ptr, ml_object_new_cons(name, the_nil));
 }
+
+ml_object *ml_throw_(ml_machine *m, ml_object *args) {
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    ml_throw(m, ml_eval_error(m, the_nil));
+  ml_object *err = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    ml_throw(m, ml_eval_error(m, the_nil));
+
+  m->exc = err;
+  longjmp(*m->last_exc_handler, 1);
+}

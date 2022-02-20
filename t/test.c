@@ -984,6 +984,88 @@ void test_special_forms(void) {
     ml_object *result = ml_machine_xeval_top(&machine, root);
     ml_test(result == the_nil);
   }
+
+  /* try */
+  {
+    int old_exc_log = exc_log;
+    exc_log = 0;
+
+    ml_machine machine = ml_machine_new();
+    const char *code = "(try\n"
+                       "  (do\n"
+                       "    (-> nil)\n"
+                       "    1)"
+                       "  catch e\n"
+                       "  (if (= (car e) (& nil-error)) 2 3))\n";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 2);
+
+    exc_log = old_exc_log;
+  }
+  {
+    int old_exc_log = exc_log;
+    exc_log = 0;
+
+    ml_machine machine = ml_machine_new();
+    const char *code = "(try\n"
+                       "  (do\n"
+                       "    (/ 1 0)\n"
+                       "    1)"
+                       "  catch e\n"
+                       "  (if (= (car e) (& nil-error)) 2 3))\n";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 3);
+
+    exc_log = old_exc_log;
+  }
+  {
+    int old_exc_log = exc_log;
+    exc_log = 0;
+
+    ml_machine machine = ml_machine_new();
+    const char *code = "(def f1 (fn nil\n"
+                       "  (try\n"
+                       "    (/ 1 0)\n"
+                       "    catch e (-> nil))))\n"
+                       "(try\n"
+                       "  (f1)\n"
+                       "  catch e\n"
+                       "  (if (= (car e) (& nil-error)) 10 20))\n";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 10);
+
+    exc_log = old_exc_log;
+  }
+  {
+    int old_exc_log = exc_log;
+    exc_log = 0;
+
+    ml_machine machine = ml_machine_new();
+    const char *code = "(def f1 (fn nil\n"
+                       "  (try\n"
+                       "    (throw (arith-error))\n"
+                       "    catch e (throw (syntax-error)))))\n"
+                       "(try\n"
+                       "  (f1)\n"
+                       "  catch e\n"
+                       "  (if (= (car e) (& syntax-error)) 50 70))\n";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 50);
+
+    exc_log = old_exc_log;
+  }
 }
 
 void test_main(void) {

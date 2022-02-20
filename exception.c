@@ -8,5 +8,5 @@ void ml_throw2(const char *filename, const char *line, ml_machine *m,
   if (exc_log)
     logmsg("%s: %s: %s", filename, line, err->cons.cdr->cons.car->str.str);
   m->exc = err;
-  longjmp(m->last_exc_handler, 1);
+  longjmp(*m->last_exc_handler, 1);
 }

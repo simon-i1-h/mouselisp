@@ -32,20 +32,28 @@ void ml_repl(void) {
     ml_object *root;
 
     /* top level error handling */
+    ml_object *prev_named_objs = machine.named_objs;
+    jmp_buf curr_jmpbuf;
+    machine.last_exc_handler = &curr_jmpbuf;
     machine.exc = the_nil;
-    if (setjmp(machine.last_exc_handler) == 0) {
+    if (setjmp(curr_jmpbuf) == 0) {
       root = ml_parser_parse(&parser, &machine);
     } else {
+      machine.named_objs = prev_named_objs;
       logmsg("error: %s", machine.exc->cons.cdr->cons.car->str.str);
       continue;
     }
 
     for (ml_object *list = root; list != the_nil; list = list->cons.cdr) {
       /* top level error handling */
+      ml_object *prev_named_objs = machine.named_objs;
+      jmp_buf curr_jmpbuf;
+      machine.last_exc_handler = &curr_jmpbuf;
       machine.exc = the_nil;
-      if (setjmp(machine.last_exc_handler) == 0) {
+      if (setjmp(curr_jmpbuf) == 0) {
         ml_object_debug_dump(ml_machine_eval(&machine, list->cons.car));
       } else {
+        machine.named_objs = prev_named_objs;
         logmsg("error: %s", machine.exc->cons.cdr->cons.car->str.str);
         continue;
       }

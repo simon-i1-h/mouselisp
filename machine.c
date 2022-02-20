@@ -1,3 +1,4 @@
+#include <setjmp.h>
 #include <string.h>
 
 #include "mouselisp.h"
@@ -181,13 +182,19 @@ ml_object *ml_prelude(void) {
   }
   {
     ml_object *name = ml_object_new_name("syntax-error");
-    ml_object *value = ml_object_new_builtin_function(ml_noname_error);
+    ml_object *value = ml_object_new_builtin_function(ml_syntax_error);
     ml_object *named = ml_object_new_cons(name, value);
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
   {
     ml_object *name = ml_object_new_name("arith-error");
-    ml_object *value = ml_object_new_builtin_function(ml_noname_error);
+    ml_object *value = ml_object_new_builtin_function(ml_arith_error);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
+  {
+    ml_object *name = ml_object_new_name("throw");
+    ml_object *value = ml_object_new_builtin_function(ml_throw_);
     ml_object *named = ml_object_new_cons(name, value);
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
@@ -497,6 +504,62 @@ ml_object *ml_machine_eval_macro(ml_machine *m, ml_object *body) {
   return ml_machine_eval(m, expanded);
 }
 
+ml_object *ml_try(ml_machine *m, ml_object *body) {
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    ml_throw(m, ml_eval_error(m, the_nil));
+  ml_object *try = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    ml_throw(m, ml_eval_error(m, the_nil));
+  ml_object *kw_catch = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    ml_throw(m, ml_eval_error(m, the_nil));
+  ml_object *error = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    ml_throw(m, ml_eval_error(m, the_nil));
+  ml_object *catch = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    ml_throw(m, ml_eval_error(m, the_nil));
+
+  if (kw_catch->tag != ML_OBJECT_NAME ||
+      strcmp(kw_catch->str.str, "catch") != 0)
+    ml_throw(m, ml_eval_error(m, the_nil));
+
+  if (error->tag != ML_OBJECT_NAME)
+    ml_throw(m, ml_eval_error(m, the_nil));
+
+  /* error handling */
+  ml_object *ret;
+  ml_object *prev_named_objs = m->named_objs;
+  jmp_buf *prev_jmpbuf = m->last_exc_handler;
+  jmp_buf curr_jmpbuf;
+  m->last_exc_handler = &curr_jmpbuf;
+  m->exc = the_nil;
+  if (setjmp(curr_jmpbuf) == 0) {
+    ret = ml_machine_eval(m, try);
+    m->last_exc_handler = prev_jmpbuf;
+  } else {
+    m->last_exc_handler = prev_jmpbuf;
+
+    ml_object *named = ml_object_new_cons(error, m->exc);
+    ml_object *new_table = ml_object_new_cons(
+        the_nil, ml_object_new_cons(named, prev_named_objs));
+    m->named_objs = new_table;
+    ret = ml_machine_eval(m, catch);
+    m->named_objs = prev_named_objs;
+  }
+  return ret;
+}
+
 ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *car = root->cons.car;
   ml_object *cdr = root->cons.cdr;
@@ -523,6 +586,8 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
       return ml_setcdr(m, cdr);
     else if (strcmp(name.str, "macro") == 0)
       return ml_macro_(m, cdr);
+    else if (strcmp(name.str, "try") == 0)
+      return ml_try(m, cdr);
   }
 
   ml_object *evaled = ml_machine_eval(m, car);
@@ -561,8 +626,10 @@ ml_object *ml_machine_eval_top(ml_machine *m, ml_object *root) {
 ml_object *ml_machine_xeval2(const char *filename, const char *line,
                              ml_machine *m, ml_object *root) {
   /* top level error handling */
+  jmp_buf curr_jmpbuf;
+  m->last_exc_handler = &curr_jmpbuf;
   m->exc = the_nil;
-  if (setjmp(m->last_exc_handler) == 0)
+  if (setjmp(curr_jmpbuf) == 0)
     return ml_machine_eval(m, root);
   else
     fatal("%s: %s: error: %s", filename, line,
@@ -572,8 +639,10 @@ ml_object *ml_machine_xeval2(const char *filename, const char *line,
 ml_object *ml_machine_xeval_top2(const char *filename, const char *line,
                                  ml_machine *m, ml_object *root) {
   /* top level error handling */
+  jmp_buf curr_jmpbuf;
+  m->last_exc_handler = &curr_jmpbuf;
   m->exc = the_nil;
-  if (setjmp(m->last_exc_handler) == 0)
+  if (setjmp(curr_jmpbuf) == 0)
     return ml_machine_eval_top(m, root);
   else
     fatal("%s: %s: error: %s", filename, line,
