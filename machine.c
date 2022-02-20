@@ -210,16 +210,21 @@ ml_object *ml_if(ml_machine *m, ml_object *body) {
   return ml_machine_eval(m, evaled->boolean ? then : else_);
 }
 
-ml_object *ml_find_named_object(ml_machine *m, const char *name) {
+ml_object *ml_find_named(ml_machine *m, const char *name) {
   for (ml_object *elem = m->named_objs; elem != the_nil;
        elem = elem->cons.cdr) {
     ml_object *pair = elem->cons.car;
     if (pair == the_nil)
       continue;
     if (strcmp(pair->cons.car->str.str, name) == 0)
-      return pair->cons.cdr;
+      return pair;
   }
   return NULL;
+}
+
+ml_object *ml_find_named_object(ml_machine *m, const char *name) {
+  ml_object *named = ml_find_named(m, name);
+  return named == NULL ? NULL : named->cons.cdr;
 }
 
 ml_object *ml_fn(ml_machine *m, ml_object *body) {
@@ -273,6 +278,97 @@ ml_object *ml_quote(ml_machine *m, ml_object *body) {
   return list;
 }
 
+ml_object *ml_set(ml_machine *m, ml_object *body) {
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *name = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *value = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  if (name->tag != ML_OBJECT_NAME)
+    fatal("invalid body");
+
+  ml_object *named = ml_find_named(m, name->str.str);
+  if (named == NULL)
+    fatal("%s is not defined.", name->str.str);
+
+  ml_object *evaled = ml_machine_eval(m, value);
+  named->cons.cdr = evaled;
+
+  return evaled;
+}
+
+ml_object *ml_setcar(ml_machine *m, ml_object *body) {
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *name = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *value = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  if (name->tag != ML_OBJECT_NAME)
+    fatal("invalid body");
+
+  ml_object *old_value = ml_find_named_object(m, name->str.str);
+  if (old_value == NULL)
+    fatal("%s is not defined.", name->str.str);
+  if (old_value->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+
+  ml_object *evaled = ml_machine_eval(m, value);
+  old_value->cons.car = evaled;
+
+  return evaled;
+}
+
+ml_object *ml_setcdr(ml_machine *m, ml_object *body) {
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *name = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *value = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  if (name->tag != ML_OBJECT_NAME)
+    fatal("invalid body");
+
+  ml_object *old_value = ml_find_named_object(m, name->str.str);
+  if (old_value == NULL)
+    fatal("%s is not defined.", name->str.str);
+  if (old_value->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+
+  ml_object *evaled = ml_machine_eval(m, value);
+  old_value->cons.cdr = evaled;
+
+  return evaled;
+}
+
 ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *car = root->cons.car;
   ml_object *cdr = root->cons.cdr;
@@ -291,6 +387,12 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
       return ml_do(m, cdr);
     else if (strcmp(name.str, "quote") == 0)
       return ml_quote(m, cdr);
+    else if (strcmp(name.str, "set") == 0)
+      return ml_set(m, cdr);
+    else if (strcmp(name.str, "setcar") == 0)
+      return ml_setcar(m, cdr);
+    else if (strcmp(name.str, "setcdr") == 0)
+      return ml_setcdr(m, cdr);
   }
 
   ml_object *value = ml_machine_eval(m, car);
