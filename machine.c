@@ -400,7 +400,7 @@ ml_object *ml_macro_(ml_machine *m, ml_object *body) {
   return ml_object_new_macro(macro_args, macro_body);
 }
 
-ml_object *ml_machine_apply(ml_machine *m, ml_object *body) {
+ml_object *ml_machine_eval_function(ml_machine *m, ml_object *body) {
   ml_function func = body->cons.car->func;
   ml_object *cdr = body->cons.cdr;
 
@@ -498,7 +498,7 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *body = ml_object_new_cons(evaled, cdr);
 
   if (evaled->tag == ML_OBJECT_FUNCTION)
-    return ml_machine_apply(m, body);
+    return ml_machine_eval_function(m, body);
   else if (evaled->tag == ML_OBJECT_MACRO)
     return ml_machine_eval_macro(m, body);
 
