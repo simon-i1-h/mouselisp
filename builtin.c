@@ -166,7 +166,6 @@ ml_object *ml_cdr(ml_machine *m, ml_object *args) {
   return list->cons.cdr;
 }
 
-/* TODO naming */
 ml_object *ml_cons_(ml_machine *m, ml_object *args) {
   (void)m;
   ml_object *curr = args;

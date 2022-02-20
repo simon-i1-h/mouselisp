@@ -130,9 +130,6 @@ typedef struct {
   ml_object *body;
 } ml_macro;
 
-/*
- * TODO: byte (array)
- */
 typedef enum ml_object_tag {
   ML_OBJECT_CONS,
   ML_OBJECT_BOOL,
@@ -148,7 +145,7 @@ typedef struct ml_object {
   union {
     ml_cons cons;
     int boolean;
-    int num;       /* TODO double? */
+    int num;
     ml_string str; /* name */
     ml_function func;
     ml_object *ptr;
@@ -203,7 +200,7 @@ ml_object *ml_div(ml_machine *m, ml_object *args);
 ml_object *ml_mod(ml_machine *m, ml_object *args);
 ml_object *ml_car(ml_machine *m, ml_object *args);
 ml_object *ml_cdr(ml_machine *m, ml_object *args);
-ml_object *ml_cons_(ml_machine *m, ml_object *args); /* TODO naming */
+ml_object *ml_cons_(ml_machine *m, ml_object *args);
 ml_object *ml_ref(ml_machine *m, ml_object *args);
 ml_object *ml_deref(ml_machine *m, ml_object *args);
 ml_object *ml_eq(ml_machine *m, ml_object *args);
