@@ -23,7 +23,7 @@ ml_object *ml_add(ml_machine *m, ml_object *args) {
   if (b->tag != ML_OBJECT_NUMBER)
     ml_throw(m, ml_eval_error(m, the_nil));
 
-  return ml_object_new_number(a->num + b->num);
+  return ml_object_new_number(chk_addi(m, a->num, b->num));
 }
 
 ml_object *ml_sub(ml_machine *m, ml_object *args) {
@@ -49,7 +49,7 @@ ml_object *ml_sub(ml_machine *m, ml_object *args) {
   if (b->tag != ML_OBJECT_NUMBER)
     ml_throw(m, ml_eval_error(m, the_nil));
 
-  return ml_object_new_number(a->num - b->num);
+  return ml_object_new_number(chk_subi(m, a->num, b->num));
 }
 
 ml_object *ml_mul(ml_machine *m, ml_object *args) {
@@ -75,7 +75,7 @@ ml_object *ml_mul(ml_machine *m, ml_object *args) {
   if (b->tag != ML_OBJECT_NUMBER)
     ml_throw(m, ml_eval_error(m, the_nil));
 
-  return ml_object_new_number(a->num * b->num);
+  return ml_object_new_number(chk_muli(m, a->num, b->num));
 }
 
 ml_object *ml_div(ml_machine *m, ml_object *args) {
@@ -101,7 +101,7 @@ ml_object *ml_div(ml_machine *m, ml_object *args) {
   if (b->tag != ML_OBJECT_NUMBER)
     ml_throw(m, ml_eval_error(m, the_nil));
 
-  return ml_object_new_number(a->num / b->num);
+  return ml_object_new_number(chk_divi(m, a->num, b->num));
 }
 
 ml_object *ml_mod(ml_machine *m, ml_object *args) {
@@ -127,7 +127,7 @@ ml_object *ml_mod(ml_machine *m, ml_object *args) {
   if (b->tag != ML_OBJECT_NUMBER)
     ml_throw(m, ml_eval_error(m, the_nil));
 
-  return ml_object_new_number(a->num % b->num);
+  return ml_object_new_number(chk_modi(m, a->num, b->num));
 }
 
 ml_object *ml_car(ml_machine *m, ml_object *args) {
