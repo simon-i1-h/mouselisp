@@ -510,3 +510,8 @@ ml_object *ml_is_ptr(ml_machine *m, ml_object *args) {
 
   return ml_object_new_bool(a->tag == ML_OBJECT_POINTER);
 }
+
+ml_object *ml_list(ml_machine *m, ml_object *args) {
+  (void)m;
+  return args;
+}

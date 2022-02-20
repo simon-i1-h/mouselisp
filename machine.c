@@ -149,6 +149,12 @@ ml_object *ml_prelude(void) {
     ml_object *named = ml_object_new_cons(name, value);
     ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
   }
+  {
+    ml_object *name = ml_object_new_name("list");
+    ml_object *value = ml_object_new_builtin_function(ml_list);
+    ml_object *named = ml_object_new_cons(name, value);
+    ret->cons.cdr = ml_object_new_cons(named, ret->cons.cdr);
+  }
 
   return ret;
 }
@@ -369,6 +375,31 @@ ml_object *ml_setcdr(ml_machine *m, ml_object *body) {
   return evaled;
 }
 
+ml_object *ml_macro_(ml_machine *m, ml_object *body) {
+  (void)m;
+  ml_object *curr = body;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *macro_args = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    fatal("invalid body");
+  ml_object *macro_body = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    fatal("invalid body");
+
+  /* validate arg list */
+  for (ml_object *l = macro_args; l != the_nil; l = l->cons.cdr)
+    if (l->tag != ML_OBJECT_CONS || l->cons.car->tag != ML_OBJECT_NAME)
+      fatal("invalid body");
+
+  return ml_object_new_macro(macro_args, macro_body);
+}
+
 ml_object *ml_machine_apply(ml_machine *m, ml_object *body) {
   ml_function func = body->cons.car->func;
   ml_object *cdr = body->cons.cdr;
@@ -411,6 +442,30 @@ ml_object *ml_machine_apply(ml_machine *m, ml_object *body) {
   }
 }
 
+ml_object *ml_machine_eval_macro(ml_machine *m, ml_object *body) {
+  ml_macro macro = body->cons.car->macro;
+
+  /* bind */
+  ml_object *new_table = m->named_objs;
+  ml_object *name = macro.args;
+  ml_object *arg = body->cons.cdr;
+  for (; name != the_nil && arg != the_nil;
+       name = name->cons.cdr, arg = arg->cons.cdr) {
+    if (name == the_nil || arg == the_nil)
+      fatal("mismatched number of args");
+    ml_object *named = ml_object_new_cons(name->cons.car, arg->cons.car);
+    new_table = ml_object_new_cons(named, new_table);
+  }
+  new_table = ml_object_new_cons(the_nil, new_table);
+
+  /* expand */
+  ml_object *curr_table = m->named_objs;
+  m->named_objs = new_table;
+  ml_object *expanded = ml_machine_eval(m, macro.body);
+  m->named_objs = curr_table;
+  return ml_machine_eval(m, expanded);
+}
+
 ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
   ml_object *car = root->cons.car;
   ml_object *cdr = root->cons.cdr;
@@ -435,14 +490,17 @@ ml_object *ml_machine_eval_list(ml_machine *m, ml_object *root) {
       return ml_setcar(m, cdr);
     else if (strcmp(name.str, "setcdr") == 0)
       return ml_setcdr(m, cdr);
+    else if (strcmp(name.str, "macro") == 0)
+      return ml_macro_(m, cdr);
   }
 
   ml_object *evaled = ml_machine_eval(m, car);
+  ml_object *body = ml_object_new_cons(evaled, cdr);
 
-  if (evaled->tag == ML_OBJECT_FUNCTION) {
-    ml_object *body = ml_object_new_cons(evaled, cdr);
+  if (evaled->tag == ML_OBJECT_FUNCTION)
     return ml_machine_apply(m, body);
-  }
+  else if (evaled->tag == ML_OBJECT_MACRO)
+    return ml_machine_eval_macro(m, body);
 
   fatal("invalid form");
 }
@@ -455,6 +513,7 @@ ml_object *ml_machine_eval(ml_machine *m, ml_object *root) {
   case ML_OBJECT_BOOL:
   case ML_OBJECT_FUNCTION:
   case ML_OBJECT_POINTER:
+  case ML_OBJECT_MACRO:
     return root;
   case ML_OBJECT_NAME:
     ret = ml_find_named_object(m, root->str.str);

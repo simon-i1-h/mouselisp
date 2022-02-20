@@ -122,6 +122,11 @@ typedef struct ml_function {
   ml_object *closure;
 } ml_function;
 
+typedef struct {
+  ml_object *args;
+  ml_object *body;
+} ml_macro;
+
 /*
  * TODO: byte (array)
  */
@@ -131,7 +136,8 @@ typedef enum ml_object_tag {
   ML_OBJECT_NUMBER,
   ML_OBJECT_NAME,
   ML_OBJECT_FUNCTION,
-  ML_OBJECT_POINTER
+  ML_OBJECT_POINTER,
+  ML_OBJECT_MACRO
 } ml_object_tag;
 
 typedef struct ml_object {
@@ -143,6 +149,7 @@ typedef struct ml_object {
     ml_string str; /* name */
     ml_function func;
     ml_object *ptr;
+    ml_macro macro;
   };
 } ml_object;
 
@@ -155,6 +162,7 @@ ml_object *ml_object_new_builtin_function(ml_builtin *builtin);
 ml_object *ml_object_new_normal_function(ml_object *closure, ml_object *args,
                                          ml_object *body);
 ml_object *ml_object_new_pointer(ml_object *ptr);
+ml_object *ml_object_new_macro(ml_object *args, ml_object *body);
 int ml_list_exists(ml_object *list, ml_object *ptr);
 void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
                                 int depth);
@@ -209,6 +217,7 @@ ml_object *ml_is_num(ml_machine *m, ml_object *args);
 ml_object *ml_is_name(ml_machine *m, ml_object *args);
 ml_object *ml_is_func(ml_machine *m, ml_object *args);
 ml_object *ml_is_ptr(ml_machine *m, ml_object *args);
+ml_object *ml_list(ml_machine *m, ml_object *args);
 
 /* init.c */
 

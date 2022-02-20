@@ -54,6 +54,13 @@ ml_object *ml_object_new_pointer(ml_object *ptr) {
   return ret;
 }
 
+ml_object *ml_object_new_macro(ml_object *args, ml_object *body) {
+  ml_object *ret = xgcmalloc(sizeof(ml_object));
+  ml_macro macro = {.args = args, .body = body};
+  *ret = (ml_object){.tag = ML_OBJECT_MACRO, .macro = macro};
+  return ret;
+}
+
 int ml_list_exists(ml_object *list, ml_object *ptr) {
   ml_object *o = list;
   while (o->tag == ML_OBJECT_CONS) {
@@ -112,6 +119,12 @@ void ml_object_debug_dump_recur(ml_object *obj, ml_object **known_objs,
       rlogmsg("NIL");
     else
       rlogmsg("POINTER: %" PRIxPTR, (uintptr_t)obj->ptr);
+    break;
+  case ML_OBJECT_MACRO:
+    rlogmsg("MACRO (ARGS, BODY):");
+    ml_object_debug_dump_recur(obj->macro.args, known_objs, depth + 1);
+    ml_object_debug_dump_recur(obj->macro.body, known_objs, depth + 1);
+    break;
   }
 }
 
