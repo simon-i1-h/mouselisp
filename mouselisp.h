@@ -198,8 +198,10 @@ typedef struct ml_machine {
 
 ml_machine ml_machine_new(void);
 ml_object *ml_find_named_object(ml_machine *m, const char *name);
-ml_object *ml_machine_xeval(ml_machine *m, ml_object *root);
-ml_object *ml_machine_xeval_top(ml_machine *m, ml_object *root);
+#define ml_machine_xeval(...) ml_machine_xeval2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+ml_object *ml_machine_xeval2(const char *filename, const char *line, ml_machine *m, ml_object *root);
+#define ml_machine_xeval_top(...) ml_machine_xeval_top2(__FILE__, stringify(__LINE__), __VA_ARGS__)
+ml_object *ml_machine_xeval_top2(const char *filename, const char *line, ml_machine *m, ml_object *root);
 
 /* builtin.c */
 
