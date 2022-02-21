@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -169,6 +170,26 @@ void test_machine(void) {
     ml_object *result = ml_machine_xeval(&machine, list1);
     ml_test(result->tag == ML_OBJECT_NUMBER);
     ml_test(result->num == 30);
+  }
+
+  /* min */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("num-min");
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == INT_MIN);
+  }
+
+  /* max */
+  {
+    ml_machine machine = ml_machine_new();
+    ml_parser parser = ml_parser_new_str("num-max");
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == INT_MAX);
   }
 }
 
