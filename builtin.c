@@ -582,3 +582,20 @@ ml_object *ml_throw_(ml_machine *m, ml_object *args) {
   m->exc = err;
   longjmp(*m->last_exc_handler, 1);
 }
+
+ml_object *ml_debug_dump(ml_machine *m, ml_object *args) {
+  (void)m;
+  ml_object *curr = args;
+
+  if (curr->tag != ML_OBJECT_CONS)
+    ml_throw(m, ml_eval_error(m, the_nil));
+  ml_object *a = curr->cons.car;
+  curr = curr->cons.cdr;
+
+  if (curr != the_nil)
+    ml_throw(m, ml_eval_error(m, the_nil));
+
+  ml_object_debug_dump(a);
+
+  return a;
+}

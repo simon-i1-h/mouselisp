@@ -69,8 +69,7 @@ void ml_execute_file(const char *filename) {
   ml_machine machine = ml_machine_new();
   ml_parser parser = ml_parser_new_file(f);
   ml_object *root = ml_parser_xparse(&parser, &machine);
-  ml_object *result = ml_machine_xeval_top(&machine, root);
-  ml_object_debug_dump(result);// TODO
+  (void)ml_machine_xeval_top(&machine, root);
 
   if (fclose(f) != 0)
     fatal("fclose");

@@ -259,6 +259,7 @@ ml_object *ml_noname_error(ml_machine *m, ml_object *args);
 ml_object *ml_syntax_error(ml_machine *m, ml_object *args);
 ml_object *ml_arith_error(ml_machine *m, ml_object *args);
 ml_object *ml_throw_(ml_machine *m, ml_object *args);
+ml_object *ml_debug_dump(ml_machine *m, ml_object *args);
 
 /* init.c */
 
