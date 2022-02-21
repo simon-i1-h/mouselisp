@@ -501,6 +501,7 @@ ml_object *ml_machine_eval_macro(ml_machine *m, ml_object *body) {
   m->named_objs = new_table;
   ml_object *expanded = ml_machine_eval(m, macro.body);
   m->named_objs = curr_table;
+
   return ml_machine_eval(m, expanded);
 }
 
