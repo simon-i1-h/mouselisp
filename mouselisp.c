@@ -61,6 +61,21 @@ void ml_repl(void) {
   }
 }
 
+void ml_execute_file(const char *filename) {
+  FILE *f = fopen(filename, "rb");
+  if (f == NULL)
+    fatal("fopen");
+
+  ml_machine machine = ml_machine_new();
+  ml_parser parser = ml_parser_new_file(f);
+  ml_object *root = ml_parser_xparse(&parser, &machine);
+  ml_object *result = ml_machine_xeval_top(&machine, root);
+  ml_object_debug_dump(result);// TODO
+
+  if (fclose(f) != 0)
+    fatal("fclose");
+}
+
 int main(int argc, char **argv) {
   mouselisp_init();
 
@@ -81,6 +96,11 @@ int main(int argc, char **argv) {
 
   if (argc > 1 && strcmp(argv[1], "--test-unique") == 0) {
     test_unique();
+    return 0;
+  }
+
+  if (argc == 2) {
+    ml_execute_file(argv[1]);
     return 0;
   }
 

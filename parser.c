@@ -1,4 +1,5 @@
 #include <setjmp.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "mouselisp.h"
@@ -29,7 +30,11 @@ inline static int is_name_rest(unsigned char c) {
 }
 
 ml_parser ml_parser_new_str(const char *str) {
-  return (ml_parser){.file = (ml_file){.str = str}};
+  return (ml_parser){.file = ml_file_new_str(str)};
+}
+
+ml_parser ml_parser_new_file(FILE *file) {
+  return (ml_parser){.file = ml_file_new_file(file)};
 }
 
 ml_object *ml_parser_parse_literal_number(ml_parser *p, ml_machine *m) {

@@ -6,6 +6,7 @@
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdio.h>
 
 /* util.c */
 
@@ -52,8 +53,18 @@ char *xgcsprintf(const char *fmt, ...);
 
 /* file.c */
 
+typedef enum ml_file_tag {
+  ML_FILE_STRING,
+  ML_FILE_FILE
+} ml_file_tag;
+
 typedef struct ml_file {
-  const char *str;
+  ml_file_tag tag;
+  union {
+    const char *str;
+    FILE *file;
+  };
+
   size_t pos;
 
   /* for unread */
@@ -67,6 +78,8 @@ typedef struct ml_read_char {
   size_t pos;
 } ml_read_char;
 
+ml_file ml_file_new_str(const char *str);
+ml_file ml_file_new_file(FILE *file);
 ml_read_char ml_file_read(ml_file *f);
 void ml_file_unread(ml_file *f, char c);
 
@@ -184,6 +197,7 @@ typedef struct ml_parser {
 } ml_parser;
 
 ml_parser ml_parser_new_str(const char *str);
+ml_parser ml_parser_new_file(FILE *file);
 ml_object *ml_parser_parse(ml_parser *p, ml_machine *m);
 #define ml_parser_xparse(...)                                                \
   ml_parser_xparse2(__FILE__, stringify(__LINE__), __VA_ARGS__)
