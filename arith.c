@@ -8,10 +8,10 @@ int chk_muli(ml_machine *m, int a, int b) {
   if (a == 0 || b == 0)
     return 0;
 
-  if ((a > 0 && b > 0 && (a > (INT_MAX / b))) ||
-      (a > 0 && b < 0 && (b < (INT_MIN / a))) ||
-      (a < 0 && b > 0 && (a < (INT_MIN / b))) ||
-      (a < 0 && b < 0 && (b < (INT_MAX / a))))
+  if ((a > 0 && b > 0 && a > (INT_MAX / b)) ||
+      (a > 0 && b < 0 && b < (INT_MIN / a)) ||
+      (a < 0 && b > 0 && a < (INT_MIN / b)) ||
+      (a < 0 && b < 0 && b < (INT_MAX / a)))
     ml_throw(m, ml_arith_error(m, the_nil));
 
   return a * b;
