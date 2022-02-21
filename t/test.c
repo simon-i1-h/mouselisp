@@ -730,6 +730,25 @@ void test_builtin(void) {
     result = result->cons.cdr;
     ml_test(result == the_nil);
   }
+
+  /* throw */
+  {
+    int old_exc_log = exc_log;
+    exc_log = 0;
+
+    ml_machine machine = ml_machine_new();
+    const char *code = "(try\n"
+                       "  (do (throw (arith-error)) (-> nil) 1)\n"
+                       "  catch e\n"
+                       "  (if (= (car e) (& arith-error)) 2 3))\n";
+    ml_parser parser = ml_parser_new_str(code);
+    ml_object *root = ml_parser_xparse(&parser, &machine);
+    ml_object *result = ml_machine_xeval_top(&machine, root);
+    ml_test(result->tag == ML_OBJECT_NUMBER);
+    ml_test(result->num == 2);
+
+    exc_log = old_exc_log;
+  }
 }
 
 void test_special_forms(void) {
