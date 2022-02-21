@@ -5,17 +5,17 @@
 #include "mouselisp.h"
 
 int chk_muli(ml_machine *m, int a, int b) {
-  if ((a > 0 && b > 0 && a > (INT_MAX / b)) ||
-      (a > 0 && b < 0 && b < (INT_MIN / a)) ||
-      (a < 0 && b > 0 && a < (INT_MIN / b)) ||
-      (a < 0 && b < 0 && b < (INT_MAX / a)))
+  if ((b > 0 && a > 0 && a > (INT_MAX / b)) ||
+      (b > 0 && a < 0 && a < (INT_MIN / b)) ||
+      (b < 0 && a > 0 && b < (INT_MIN / a)) ||
+      (b < 0 && a < 0 && b < (INT_MAX / a)))
     ml_throw(m, ml_arith_error(m, the_nil));
 
   return a * b;
 }
 
 int chk_addi(ml_machine *m, int a, int b) {
-  if ((a > 0 && b > (INT_MAX - a)) || (a < 0 && b < (INT_MIN - a)))
+  if ((b > 0 && a > (INT_MAX - b)) || (b < 0 && a < (INT_MIN - b)))
     ml_throw(m, ml_arith_error(m, the_nil));
 
   return a + b;
