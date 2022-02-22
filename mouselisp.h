@@ -53,10 +53,7 @@ char *xgcsprintf(const char *fmt, ...);
 
 /* file.c */
 
-typedef enum ml_file_tag {
-  ML_FILE_STRING,
-  ML_FILE_FILE
-} ml_file_tag;
+typedef enum ml_file_tag { ML_FILE_STRING, ML_FILE_FILE } ml_file_tag;
 
 typedef struct ml_file {
   ml_file_tag tag;
