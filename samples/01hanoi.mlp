@@ -1,0 +1,90 @@
+(def nil? (fn (x)
+  (if (ptr? x)
+    (if (= x nil)
+      true
+      false)
+    false)))
+
+(def list-copy (fn (ls)
+  (if (nil? ls)
+    nil
+    (cons (car ls) (list-copy (cdr ls))))))
+
+(def len-list (fn (ls) (len-list-recur ls 0)))
+(def len-list-recur (fn (ls accum)
+  (if (nil? ls)
+    accum
+    (len-list-recur (cdr ls) (+ accum 1)))))
+
+(def slice-back (fn (ls n) (slice-back-recur ls n (len-list ls) 0)))
+(def slice-back-recur (fn (ls n len i)
+  (if (nil? ls)
+    nil
+    (if (< i (- len n))
+      (slice-back-recur (cdr ls) n len (+ i 1))
+      (cons (car ls) (slice-back-recur (cdr ls) n len (+ i 1)))))))
+
+(def slice-front (fn (ls ndels) (slice-front-recur ls ndels (len-list ls) 0)))
+(def slice-front-recur (fn (ls ndels len i)
+  (if (nil? ls)
+    nil
+    (if (< i (- len ndels))
+      (cons (car ls) (slice-front-recur (cdr ls) ndels len (+ i 1)))
+      nil))))
+
+(def list-at (fn (ls index) (list-at-recur ls index 0)))
+(def list-at-recur (fn (ls index i)
+  (if (nil? ls)
+    (throw (eval-error))
+    (if (= index i)
+      (car ls)
+      (list-at-recur (cdr ls) index (+ i 1))))))
+
+(def list-concat (fn (ls1 ls2)
+  (if (nil? ls1)
+    ls2
+    (list-concat-recur ls1 ls2 ls1))))
+(def list-concat-recur (fn (ls1 ls2 ls)
+  (if (nil? (cdr ls))
+    (do (setcdr ls ls2) ls1)
+    (list-concat-recur ls1 ls2 (cdr ls)))))
+
+(def solve-hanoi (fn (towers start mid goal ndisks)
+  (if (= ndisks 1)
+    (list (cons start goal))
+    (do
+      (def ops nil)
+      (def tower-start (list-at towers start))
+      (def tower-mid (list-at towers mid))
+      (def tower-goal (list-at towers goal))
+
+      (def tower-start-start (slice-front tower-start (- ndisks 1)))
+      (def tower-start-mid (list-concat (list-copy tower-mid)
+                                        (slice-back tower-start (- ndisks 1))))
+      (def tower-start-goal (list-copy tower-goal))
+      (set ops (list-concat
+        ops
+        (solve-hanoi
+          (list tower-start-start tower-start-mid tower-start-goal)
+          start goal mid (- ndisks 1))))
+
+      (def tower-mid-start (slice-front tower-start-start 1))
+      (def tower-mid-mid (list-copy tower-start-mid))
+      (def tower-mid-goal (list-concat (list-copy tower-start-goal)
+                                       (slice-back tower-start-start 1)))
+      (set ops (list-concat ops (list (cons start goal))))
+
+      (def tower-goal-start (list-copy tower-mid-start))
+      (def tower-goal-mid (slice-front tower-mid-mid (- ndisks 1)))
+      (def tower-goal-goal (list-concat (list-copy tower-mid-goal)
+                                        (slice-back tower-mid-mid
+                                                    (- ndisks 1))))
+      (set ops (list-concat
+        ops
+        (solve-hanoi
+          (list tower-goal-start tower-goal-mid tower-goal-goal)
+          mid start goal (- ndisks 1))))
+
+      ops))))
+
+(debug-dump (solve-hanoi (list (list 3 2 1 0) nil nil) 0 1 2 4))
