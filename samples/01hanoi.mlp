@@ -10,13 +10,13 @@
     nil
     (cons (car ls) (list-copy (cdr ls))))))
 
-(def len-list (fn (ls) (len-list-recur ls 0)))
-(def len-list-recur (fn (ls accum)
+(def list-len (fn (ls) (list-len-recur ls 0)))
+(def list-len-recur (fn (ls accum)
   (if (nil? ls)
     accum
-    (len-list-recur (cdr ls) (+ accum 1)))))
+    (list-len-recur (cdr ls) (+ accum 1)))))
 
-(def slice-back (fn (ls n) (slice-back-recur ls n (len-list ls) 0)))
+(def slice-back (fn (ls n) (slice-back-recur ls n (list-len ls) 0)))
 (def slice-back-recur (fn (ls n len i)
   (if (nil? ls)
     nil
@@ -24,7 +24,7 @@
       (slice-back-recur (cdr ls) n len (+ i 1))
       (cons (car ls) (slice-back-recur (cdr ls) n len (+ i 1)))))))
 
-(def slice-front (fn (ls ndels) (slice-front-recur ls ndels (len-list ls) 0)))
+(def slice-front (fn (ls ndels) (slice-front-recur ls ndels (list-len ls) 0)))
 (def slice-front-recur (fn (ls ndels len i)
   (if (nil? ls)
     nil
