@@ -1,0 +1,30 @@
+; 最初に作ったハノイの塔のソルバを再考したところ無意味な処理があったこ
+; とが分かったので書き直した。
+
+(def nil? (fn (x)
+  (if (ptr? x)
+    (if (= x nil)
+      true
+      false)
+    false)))
+
+(def list-concat (fn (ls1 ls2)
+  (if (nil? ls1)
+    ls2
+    (list-concat-recur ls1 ls2 ls1))))
+(def list-concat-recur (fn (ls1 ls2 ls)
+  (if (nil? (cdr ls))
+    (do (setcdr ls ls2) ls1)
+    (list-concat-recur ls1 ls2 (cdr ls)))))
+
+(def solve-hanoi (fn (ndisks start mid goal)
+  (if (= ndisks 1)
+    (list (cons start goal))
+    (do
+      (def ops nil)
+      (set ops (list-concat ops (solve-hanoi (- ndisks 1) start goal mid)))
+      (set ops (list-concat ops (list (cons start goal))))
+      (set ops (list-concat ops (solve-hanoi (- ndisks 1) mid start goal)))
+      ops))))
+
+(debug-dump (solve-hanoi 4 0 1 2))
